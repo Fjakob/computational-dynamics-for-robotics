@@ -61,7 +61,10 @@ classdef Rot
             % CARDAN returns a rotation about the roll-pitch-yaw axes.
             %
             %   See also X, Y, and Z.
-            R = Rot.z(gamma) * Rot.y(beta) * Rot.x(alpha);
+            
+            % ------------- ENTER YOUR CODE HERE -------------
+            % 	add lines and change variable names as needed/preferred
+            R = ???;
         end        
         function R = froma2b(a, b)
             % FROMA2B returns a rotation matrix that rotates the vector A
