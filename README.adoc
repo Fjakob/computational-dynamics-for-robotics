@@ -1,7 +1,15 @@
 = Solutions to Exercise 1
-:stem: latex
+:stem: latexmath
 :source-highlighter: highlightjs
 :highlightjs-languages: matlab
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
 These solutions are from previous iterations of the course.  They have been
 updated to reflect this year's iteration of the problem set.
