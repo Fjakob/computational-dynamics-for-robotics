@@ -19,16 +19,17 @@ clear;
 create alpha, alpha_dot, etc. as symbolic real variables
 
 define R_sc in terms of angles (alpha, beta, gamma)
-%    * hmmm, maybe there is a useful function we can use in
-%      <matlab:open('Rot.m') Rot.m>
+%   * hmmm, maybe there is a useful function we can use in
+%   <matlab:open('Rot.m') Rot.m>
 
 %% Compute $[\omega]$ in the Body Frame
 % *before* writing any code, write down the time derivative of
-% $R(\alpha(t), \beta(t), \gamma(t))$, $\dot{R}(\alpha(t), \beta(t),
-% \gamma(t))$ using the chain rule.  Then apply the resulting equation in
-% the for loop.  See <matlab:open('demo_compute_rdot.m')
-% demo_compute_rdot.m> for an example.  The output of |omega_b| will be
-% used as part of the next cell.
+% $R(\alpha(t), \beta(t), \gamma(t))$---that is $\dot{R}(\alpha(t),
+% \beta(t), \gamma(t))$, using the chain rule for an element of $R(t)$.  In
+% other words, if $r_{ij}(t)$ is the value at the $i^\text{th}$ row in the
+% $j^\text{th}$ column of $R(t)$, what is $\frac{d r_{ij}(t)}{dt}$?  Then
+% apply the resulting equation in the for loop.  See
+% <matlab:open('demo_compute_rdot.m') demo_compute_rdot.m> for an example.
 
 R_dot_sc = sym(zeros(3));  % allocate space for results
 for r = 1:3 % row index
@@ -41,25 +42,30 @@ R_dot_sc %#ok<NOPTS>
 %%
 % we symbolically compute $[\omega]$ in {c} and simplify the symbolic
 % result. *Watch out!  There are two ways to define angular velocity.*  We
-% are writing the angular velocity in the body frame {c}.
+% are writing the angular velocity in the body frame {c}.  The output of
+% |omega_c| will be used as part of the next cell.
 
-R_cs = the inverse of R_sc, since we're dealing with syms don't use '
-omega_b_mat = the body angular velocity written in terms of R_dot and R;
-omega_b_mat = simplify(expand(omega_b_mat));
+R_cs = the inverse of R_sc
+omega_c_mat = the body angular velocity written in terms of R_dot and R;
+omega_c_mat = simplify(expand(omega_c_mat));
 
-omega_b = Rot.deskew(omega_b_mat) %#ok<NOPTS>
-
+% convert from the matrix representation of \omega back to its vector form
+omega_c = Rot.deskew(omega_c_mat) %#ok<NOPTS>
 
 %% Compute B
 % compute the linear mapping B which takes the Cardan angle velocities
-% $(\dot{\alpha}, \dot{\beta}, \dot{\gamma})$ and maps them to $\omega_b$
+% $(\dot{\alpha}, \dot{\beta}, \dot{\gamma})$ and maps them to $\omega_c$
 %
-% $$\omega_b = B * (\dot{alpha}, \dot{beta}, \dot{gamma})^T$$
+% $$\omega_c = B \left[ \begin{array}{c} \dot{\alpha} \\ \dot{\beta} \\
+% \dot{\gamma} \end{array} \right]$$
 %
 % Then combine with |R_sc| to create |R_scB|.  We can extract $B$ from the
-% the output of |omega_b| in the previous cell.
+% the output of |omega_c| in the previous cell.
 
-B = a matrix determined from the output of omega_b
+B = [ b11, b12, b13;
+    b21, b22, b23;
+    b31, b32, b33];
+
 R_scB = simplify(expand(R_sc * B));
 
 %% From Symbolic Math to Numerical Expressions
@@ -103,15 +109,15 @@ for i = 1:n
     % compute cardan angle velocities; never call inverse, use linear solve
      R_scB_num = call to R_scB_fct
     
-     cardan_velocities = solution to the following linear equation:
-         R_scB_num * cardan_velocities = omega_s_num;
-%       * do NOT call inv(); it's slow and considered bad practice.
-
+     cardan_velocities = solution to:
+        R_scB_num * cardan_velocities = omega_s_num;
+%       * do NOT call inverse(); it's slow and considered bad practice.
+       
     % Euler integration
     alpha_num = Euler integration using cardan_velocities;
     beta_num = Euler integration using cardan_velocities;
     gamma_num = Euler integration using cardan_velocities;
-
+        
     % Compute new transformation from cardan angles:
     R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
     c.R = R_sc_num;
