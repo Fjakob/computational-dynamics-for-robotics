@@ -17,7 +17,15 @@ classdef Rot
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             w_mat = ???;
-        end         
+        end
+        function w = deskew(w_mat)
+            % DESKEW returns the vector representation of the
+            % skew-symmetric matrix W_MAT.
+            
+            % ------------- ENTER YOUR CODE HERE -------------
+            % 	add lines and change variable names as needed/preferred
+            w = ???;
+        end
         function R = axisangle(w_hat, theta)
             % AXISANGLE returns a rotation of THETA radians about the unit
             % vector W.
