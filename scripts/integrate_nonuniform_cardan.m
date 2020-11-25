@@ -24,9 +24,9 @@
 run integrate_cardan.m;
 
 %%
-% make $[\omega_b]$ into a function
+% make $[\omega_c]$ into a function
 
-omega_b_mat_fct = matlabFunction(omega_b_mat, ...
+omega_c_mat_fct = matlabFunction(omega_c_mat, ...
     'Vars', [alpha, beta, gamma, alpha_dot, beta_dot, gamma_dot]);
 
 %%
@@ -50,7 +50,7 @@ c = Frame(env2, R_sc_num);
 c.color = Utils.BLUE;
 c.name = 'c';
 
-omega_c_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
+omega_c_mat_num = omega_c_mat_fct(alpha_num, beta_num, gamma_num, ...
     alpha_dot_num, beta_dot_num, gamma_dot_num);
 
 omega_c_num = Rot.deskew(omega_c_mat_num);
@@ -71,7 +71,7 @@ for i = 1:n
     
     R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
 
-    omega_c_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
+    omega_c_mat_num = omega_c_mat_fct(alpha_num, beta_num, gamma_num, ...
         alpha_dot_num, beta_dot_num, gamma_dot_num);
     
     omega_c_num = Rot.deskew(omega_c_mat_num);
