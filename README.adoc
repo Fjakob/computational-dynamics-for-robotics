@@ -3,6 +3,14 @@
 :toc-placement!:
 :repo: link:https://github.tik.uni-stuttgart.de/inm-RAMlab/LectureCDR/tree
 
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 The code in this repository accompanies the lecture **Computational Dynamics for Robotics** held at the University of Stuttgart.
 
 IMPORTANT: The code will be updated as we go along the semester. 
