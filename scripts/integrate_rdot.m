@@ -9,12 +9,12 @@
 %   C. David Remy remy@inm.uni-stuttgart.de 10/12/2018, Matlab R2018a, v21
 
 %% Prerequisites
-% If you haven't already, familiarize yourself with
+% If you haven't already,
 %
-% * Adding the LectureCDR files to Matlab's path using |cdr_addpath.m|.
-% * Have Rot.skew, Rot.x, Rot.y, and Rot.z in <matlab:open('Rot.m') Rot.m>
+% * add the LectureCDR files to Matlab's path using |cdr_addpath.m|.
+% * have Rot.skew, Rot.x, Rot.y, and Rot.z in <matlab:open('Rot.m') Rot.m>
 % implemented and working correctly.
-% * Familiarize yourself with <matlab:open('demo_single_rotation.m')
+% * familiarize yourself with <matlab:open('demo_single_rotation.m')
 % demo_single_rotation.m> for simple examples of setting up the environment
 % and <matlab:open('demo_compute_rdot.m') demo_compute_rdot.m> for
 % computing \dot{R}.
@@ -42,7 +42,6 @@ c = Frame(an Environment object, a description of {c} relative to {s})
 %   + add a line to set color to red (hint use the RED property in Utils)
 %   + add a line to set the name to 'c'
 
-
 %% The Angular Velocity
 % Let's define frame {c} as rotating about a unit axis in {s} at 1 rad/s:
 % $(\hat{\omega}_s, \dot{\theta}) = (\sqrt{1/3}[1, 1, 1]^T, 1)$.  In order
@@ -62,7 +61,6 @@ v_omega = CoordVector(env, env.getframe(), the vector omega in {s});
 %   + add a line to represent omega_s as a yellow vector
 %   + add a line that names the vector '$\omega_s$ (which will render the
 %     name using LaTeX markup)
-
 
 %% Animate the Frame
 % Now we just need to compute the R_dot and we're done!  Make use of the

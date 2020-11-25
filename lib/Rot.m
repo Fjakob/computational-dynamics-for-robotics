@@ -1,8 +1,5 @@
+% ROT Documentation pending
 classdef Rot
-    %ROT A class for representing rotations and angular velocities
-    %
-    %   Given the description of each incomplete method in this file,
-    %   replace the pseudocode below with valid Matlab code.
     methods (Static)
         function w_mat = skew(w)
             % SKEW returns the so(3) representation of W as a
@@ -12,8 +9,7 @@ classdef Rot
             %       syms x1 x2 x3 real;
             %       w = [x1; x2; x3];
             %       Rot.skew(w)
-            %           => [0 -x3 x2; x3 0 -x1; -x2 x1 0]
-
+            %       >> [0 -x3 x2; x3 0 -x1; -x2 x1 0]
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             w_mat = ???;
@@ -21,26 +17,21 @@ classdef Rot
         function w = deskew(w_mat)
             % DESKEW returns the vector representation of the
             % skew-symmetric matrix W_MAT.
-            
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            w = ???;
+            w = [w_mat(3, 2); w_mat(1, 3); w_mat(2, 1)];
         end
         function R = axisangle(w_hat, theta)
             % AXISANGLE returns a rotation of THETA radians about the unit
             % vector W.
-            
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             w_mat = Rot.skew(w_hat);
-            R = ???;
+            R = ???;            
         end
         function R = x(theta)
             % X returns a rotation of THETA radians about the coordinate
             % x-axis.
             %
             %   See also Y and Z.
-            
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             R = ???;
@@ -50,7 +41,6 @@ classdef Rot
             % y-axis.
             %
             %   See also X and Z.
-            
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             R = ???;
@@ -60,7 +50,6 @@ classdef Rot
             % z-axis.
             %
             %   See also X and Y.
-
             % ------------- ENTER YOUR CODE HERE -------------
             % 	add lines and change variable names as needed/preferred
             R = ???;

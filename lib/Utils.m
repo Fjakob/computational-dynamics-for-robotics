@@ -64,17 +64,7 @@ classdef Utils
                 v = (R * S) * vertices' + p;
             end
             
-        end
-        
-        %         function imgs = initsnapshots(env, n)
-        %             if nargin < 2
-        %                 n = 1;
-        %             end
-        %
-        %             imgs.data = cell(n, 1);
-        %             imgs.data{1} = frame2im(getframe(env.fig));
-        %         end
-        
+        end      
         function frames = takesnapshot(env, frames, i)
             if nargin == 1 % dynamically add imgs
                 i = 1;

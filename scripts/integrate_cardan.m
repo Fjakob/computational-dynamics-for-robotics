@@ -19,8 +19,8 @@ clear;
 create alpha, alpha_dot, etc. as symbolic real variables
 
 define R_sc in terms of angles (alpha, beta, gamma)
-%   * hmmm, maybe there is a useful function we can use in
-%   <matlab:open('Rot.m') Rot.m>
+%    * hmmm, maybe there is a useful function we can use in
+%    <matlab:open('Rot.m') Rot.m>
 
 %% Compute $[\omega]$ in the Body Frame
 % *before* writing any code, write down the time derivative of
@@ -112,7 +112,7 @@ for i = 1:n
      cardan_velocities = solution to:
         R_scB_num * cardan_velocities = omega_s_num;
 %       * do NOT call inverse(); it's slow and considered bad practice.
-       
+    
     % Euler integration
     alpha_num = Euler integration using cardan_velocities;
     beta_num = Euler integration using cardan_velocities;

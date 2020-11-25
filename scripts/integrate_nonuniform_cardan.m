@@ -50,12 +50,12 @@ c = Frame(env2, R_sc_num);
 c.color = Utils.BLUE;
 c.name = 'c';
 
-omega_b_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
+omega_c_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
     alpha_dot_num, beta_dot_num, gamma_dot_num);
 
-omega_b_num = Rot.deskew(omega_b_mat_num);
+omega_c_num = Rot.deskew(omega_c_mat_num);
 
-v_omega = CoordVector(env2, c, omega_b_num);
+v_omega = CoordVector(env2, c, omega_c_num);
 v_omega.color = Utils.YELLOW;
 v_omega.name = '$v_\omega$';
 
@@ -66,20 +66,20 @@ snapshots = Utils.takesnapshot(env2); % save the current figure
 for i = 1:n
     % Euler integration
     alpha_num = alpha + \dot{alpha} * delta_t;
-    beta_num = similar to above but with beta;
-    gamma_num = similar to above but with gamma;
+    beta_num = ...;
+    gamma_num = ...;
     
     R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
 
-    omega_b_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
+    omega_c_mat_num = omega_b_mat_fct(alpha_num, beta_num, gamma_num, ...
         alpha_dot_num, beta_dot_num, gamma_dot_num);
     
-    omega_b_num = Rot.deskew(omega_b_mat_num);
+    omega_c_num = Rot.deskew(omega_c_mat_num);
     
     % updated the frame
     c.R = R_sc_num;
     % update the vector
-    v_omega.setCoords(c, omega_b_num);
+    v_omega.setCoords(c, omega_c_num);
     % update graphics
     drawnow();
     snapshots = Utils.takesnapshot(env2, snapshots);

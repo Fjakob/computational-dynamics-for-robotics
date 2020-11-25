@@ -29,7 +29,7 @@ g.color = Utils.GREEN;
 g.name = 'g';
 
 %% Create {b} Relative to {g}
-% {b} is rotated $45^\circ$ about $\hat{y}_g$.
+% {b} is rotated $45^\circ$ about $\hat{y}_s$.
 %
 % Given this description, replace the pseudocode below with valid Matlab
 % code.  In the code,
@@ -49,7 +49,7 @@ b = Frame(???, orientation of {b} in {s})
 %    + add a line that names the fram 'b'
 
 %% Create {a} Relative to {b}
-% {a} is rotated $60^\circ$ about $\hat{x}_b$.
+% {a} is rotated $60^\circ$ about $\hat{x}_s$.
 
 alpha = ???;
 %   + what rotation matrices would be useful to have defined?
@@ -72,7 +72,8 @@ v_g = the free vector v in {g} coordinates
 v_s = the free vector v in {g} coordinates
 
 %%
-% alternatively (if you want to compare, remove semicolon to echo output)
+% alternatively
+
 va.getCoords(a);
 va.getCoords(b);
 va.getCoords(g);
