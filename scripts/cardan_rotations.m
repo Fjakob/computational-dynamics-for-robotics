@@ -39,38 +39,37 @@ g.name = 'g';
 % * a |+| represents additional lines of code you should write after your
 % line of valid code.
 
-beta = 45 * pi / 180;
-R_gb = Rot.y(beta);
-R_sb = R_sg * R_gb;
+beta = rotation angle about $\hat{y}$
 
-b = Frame(env, R_sb);
-b.color = Utils.BLUE;
-b.name = 'b';
+R_gb = ???;
+R_sb = ???;
+
+b = Frame(???, orientation of {b} in {s})
+%    + add a line that make the frame blue
+%    + add a line that names the fram 'b'
 
 %% Create {a} Relative to {b}
 % {a} is rotated $60^\circ$ about $\hat{x}_s$.
 
-alpha = 60 * pi / 180;
-R_ba = Rot.x(alpha);
-R_sa = R_sb * R_ba;
-
-a = Frame(env, R_sa);
-a.color = Utils.RED;
-a.name = 'a';
+alpha = ???;
+%   + what rotation matrices would be useful to have defined?
+%   + create a frame and store it in a variable |a|
+%   + make |a| a RED frame with name 'a'
 
 %% Create $v$ and represent it in different coordinate systems
 % we can perform the change of coordinates using the rotation matrices or
 % the |getCoords| method of the CoordVector class.
 
 v_a = [1; 1; 1];
-va = CoordVector(env, a, v_a);
+va = CoordVector(env, the frame {a}, the vector v in {a} coordinates);
 va.color = Utils.MAGENTA;
-va.name = '$v_a$';
+va.name = '$v_a$'; % we can use LaTeX markup in string names
 
 v_a %#ok<NOPTS> (tell Matlab we're OK with echoing output)
-v_b = R_ba * v_a %#ok<NOPTS>
-v_g = R_gb * R_ba * v_a %#ok<NOPTS>
-v_s = R_sa * v_a %#ok<NOPTS>
+v_b = the free vector v in {b} coordinates
+%   * you should write v_b in terms of v_a and your rotation matrices
+v_g = the free vector v in {g} coordinates
+v_s = the free vector v in {g} coordinates
 
 %%
 % alternatively

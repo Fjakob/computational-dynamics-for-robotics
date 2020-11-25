@@ -65,9 +65,9 @@ v_omega.name = '$v_\omega$';
 snapshots = Utils.takesnapshot(env2); % save the current figure
 for i = 1:n
     % Euler integration
-    alpha_num = alpha_num + alpha_dot_num * delta_t;
-    beta_num = beta_num  + beta_dot_num * delta_t;
-    gamma_num = gamma_num + gamma_dot_num * delta_t;
+    alpha_num = alpha + \dot{alpha} * delta_t;
+    beta_num = ...;
+    gamma_num = ...;
     
     R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
 
