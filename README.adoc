@@ -1,8 +1,21 @@
 = Computational Dynamics for Robotics
+:toc:
+:toc-placement!:
+:repo: link:https://github.tik.uni-stuttgart.de/inm-RAMlab/LectureCDR/tree
 
 This MATLAB code framework accompanies the lecture **Computational Dynamics for Robotics** held at the University of Stuttgart.
 
 The code will be updated as we go along the semester. 
+
+toc::[]
+
+== Branches
+Here we list a summary of branches and tags in the repository.
+
+master:: The main branch, where the current templates and solutions are kept.  We also maintain the official version of the library here.
+Ex1:: Ex1 contains solutions to Exercise 1 ({repo}/v1.0[v1.0]).
+Ex2:: Ex2 contains templates and solutions to Exercise 2 ({repo}/v2.0-templates[v2.0-templates], {repo}/v2.0[v2.0]).
+sandbox:: deprecated; this branch has been deleted from the repo.
 
 == Contributing
 
