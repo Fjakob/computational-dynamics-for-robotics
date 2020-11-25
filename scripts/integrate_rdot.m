@@ -30,17 +30,16 @@
 % * a |+| represents additional lines of code you should write after your
 % line of valid code.
 
-env = an Environment
-%   * set env to be an instance of class Environment
-%   + then add an extra line to show {s} in the environment
+clear;
+run ../cdr_addpath.m
 
-gamma = pi / 2;
-R_sc = {c} rotated by gamma about the \hat{z}_s axis of {s}
-%   * hint use Rot.z
+env = Environment();
+env.show();
 
-c = Frame(an Environment object, a description of {c} relative to {s})
-%   + add a line to set color to red (hint use the RED property in Utils)
-%   + add a line to set the name to 'c'
+R_sc = Rot.z(pi / 2);
+c = Frame(env, R_sc);
+c.color = Utils.RED;
+c.name = 'c';
 
 %% The Angular Velocity
 % Let's define frame {c} as rotating about a unit axis in {s} at 1 rad/s:
@@ -53,14 +52,12 @@ c = Frame(an Environment object, a description of {c} relative to {s})
 % # defines its matrix representation.
 % # draws $\omega_s$ in the environment.
 
-omega_s = \hat{omega}_s * \dot{\theta}
-omega_s_mat = matrix representation of omega_s
-%   * hint use Rot.skew
+omega_s = sqrt(1/3) * [1;1;1];
+omega_s_mat = Rot.skew(omega_s);
 
-v_omega = CoordVector(env, env.getframe(), the vector omega in {s});
-%   + add a line to represent omega_s as a yellow vector
-%   + add a line that names the vector '$\omega_s$ (which will render the
-%     name using LaTeX markup)
+v_omega = CoordVector(env, env.getframe(), omega_s);
+v_omega.color = Utils.YELLOW; % <>
+v_omega.name = '$\omega_s$'; % <>
 
 %% Animate the Frame
 % Now we just need to compute the R_dot and we're done!  Make use of the
@@ -79,7 +76,7 @@ delta_t = 2*pi/n;
 snapshots = Utils.takesnapshot(env); % save the current figure
 for i = 1:n
     % Compute derivative using one of the equations above
-    R_dot_sc = ???;
+    R_dot_sc = omega_s_mat * R_sc;
     
     % computer the Euler step
     R_sc = R_sc + R_dot_sc  * delta_t;
