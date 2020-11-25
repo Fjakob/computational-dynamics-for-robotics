@@ -16,11 +16,8 @@
 % examples of using the Symbolic Math Toolbox.
 
 clear;
-create alpha, alpha_dot, etc. as symbolic real variables
-
-define R_sc in terms of angles (alpha, beta, gamma)
-%    * hmmm, maybe there is a useful function we can use in
-%    <matlab:open('Rot.m') Rot.m>
+syms alpha alpha_dot beta beta_dot gamma gamma_dot real
+R_sc = Rot.cardan(alpha, beta, gamma) %#ok<NOPTS>
 
 %% Compute $[\omega]$ in the Body Frame
 % *before* writing any code, write down the time derivative of
@@ -34,7 +31,9 @@ define R_sc in terms of angles (alpha, beta, gamma)
 R_dot_sc = sym(zeros(3));  % allocate space for results
 for r = 1:3 % row index
     for c = 1:3 % column index
-        R_dot_sc(r, c) = d/dalpha(R_sc(r,c)) * d/dt(alpha) + ... ;
+        R_dot_sc(r, c) = diff(R_sc(r, c), alpha) * alpha_dot ...
+            + diff(R_sc(r, c), beta) * beta_dot ...
+            + diff(R_sc(r, c), gamma) * gamma_dot;
     end
 end
 R_dot_sc %#ok<NOPTS>
@@ -45,9 +44,9 @@ R_dot_sc %#ok<NOPTS>
 % are writing the angular velocity in the body frame {c}.  The output of
 % |omega_c| will be used as part of the next cell.
 
-R_cs = the inverse of R_sc
-omega_c_mat = the body angular velocity written in terms of R_dot and R;
-omega_c_mat = simplify(expand(omega_c_mat));
+R_cs = transpose(R_sc);
+omega_c_mat = R_cs*R_dot_sc;
+omega_c_mat = simplify(expand(omega_c_mat)) %#ok<NOPTS>
 
 % convert from the matrix representation of \omega back to its vector form
 omega_c = Rot.deskew(omega_c_mat) %#ok<NOPTS>
@@ -62,9 +61,12 @@ omega_c = Rot.deskew(omega_c_mat) %#ok<NOPTS>
 % Then combine with |R_sc| to create |R_scB|.  We can extract $B$ from the
 % the output of |omega_c| in the previous cell.
 
-B = [ b11, b12, b13;
-    b21, b22, b23;
-    b31, b32, b33];
+B = [1, 0, -sin(beta);
+    0, cos(alpha), sin(alpha)*cos(beta);
+    0, -sin(alpha), cos(alpha)*cos(beta)] %#ok<NOPTS>
+
+% alternatively
+% B = jacobian(omega_c, [alpha_dot, beta_dot, gamma_dot])
 
 R_scB = simplify(expand(R_sc * B));
 
@@ -72,19 +74,19 @@ R_scB = simplify(expand(R_sc * B));
 % create numerical functions from the analytical
 % expressions using <matlab:doc('matlabFunction') matlabFunction>.
 
-R_sc_fct = matlabFunction(arguments to return R_sc as a function handle);
-R_scB_fct = matlabFunction(arguments to return R_scB as a function handle);
+R_sc_fct = matlabFunction(R_sc, 'Vars', [alpha, beta, gamma]);
+R_scB_fct = matlabFunction(R_scB, 'Vars', [alpha, beta, gamma]);
 
 %%
 % define numerical values so that $R_{sc}(0) = Rot(\hat{z}_s,
 % \frac{\pi}{2})$ and $\omega_s = \sqrt{\frac{1}{3}} (1, 1, 1)^T$.
 
-alpha_num = ...
-beta_num = ...
-gamma_num = ...
-R_sc_num = call to R_sc_fct
+alpha_num = 0;
+beta_num = 0;
+gamma_num = pi / 2;
+R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
 
-omega_s_num = ...
+omega_s_num = sqrt(1/3) * [1; 1; 1];
 
 %% Create the Environment
 % create a physical (graphical) environment, which shows the fixed frame,
@@ -107,16 +109,13 @@ delta_t = 2 * pi/n;
 snapshots = Utils.takesnapshot(env); % save the current figure
 for i = 1:n
     % compute cardan angle velocities; never call inverse, use linear solve
-     R_scB_num = call to R_scB_fct
-    
-     cardan_velocities = solution to:
-        R_scB_num * cardan_velocities = omega_s_num;
-%       * do NOT call inverse(); it's slow and considered bad practice.
+    R_scB_num = R_scB_fct(alpha_num, beta_num, gamma_num);
+    cardan_velocities = R_scB_num \ omega_s_num;
     
     % Euler integration
-    alpha_num = Euler integration using cardan_velocities;
-    beta_num = Euler integration using cardan_velocities;
-    gamma_num = Euler integration using cardan_velocities;
+    alpha_num = alpha_num + cardan_velocities(1) * delta_t;
+    beta_num  = beta_num  + cardan_velocities(2) * delta_t;
+    gamma_num = gamma_num + cardan_velocities(3) * delta_t;
         
     % Compute new transformation from cardan angles:
     R_sc_num = R_sc_fct(alpha_num, beta_num, gamma_num);
