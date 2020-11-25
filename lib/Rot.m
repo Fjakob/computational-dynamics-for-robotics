@@ -1,8 +1,5 @@
+% ROT Documentation pending
 classdef Rot
-    %ROT A class for representing rotations and angular velocities
-    %
-    %   Given the description of each incomplete method in this file,
-    %   replace the pseudocode below with valid Matlab code.
     methods (Static)
         function w_mat = skew(w)
             % SKEW returns the so(3) representation of W as a
@@ -12,58 +9,55 @@ classdef Rot
             %       syms x1 x2 x3 real;
             %       w = [x1; x2; x3];
             %       Rot.skew(w)
-            %           => [0 -x3 x2; x3 0 -x1; -x2 x1 0]
-
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            w_mat = ???;
+            %       >> [0 -x3 x2; x3 0 -x1; -x2 x1 0]
+            w_mat = [0 -w(3) w(2); w(3) 0 -w(1); -w(2) w(1) 0];
         end
         function w = deskew(w_mat)
             % DESKEW returns the vector representation of the
             % skew-symmetric matrix W_MAT.
-            
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            w = ???;
+            w = [w_mat(3, 2); w_mat(1, 3); w_mat(2, 1)];
         end
         function R = axisangle(w_hat, theta)
             % AXISANGLE returns a rotation of THETA radians about the unit
             % vector W.
-            
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
             w_mat = Rot.skew(w_hat);
-            R = ???;
+            R = eye(3) + sin(theta) * w_mat + (1 - cos(theta)) * w_mat^2;
         end
         function R = x(theta)
             % X returns a rotation of THETA radians about the coordinate
             % x-axis.
             %
             %   See also Y and Z.
-            
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            R = ???;
+            s = sin(theta);
+            c = cos(theta);
+            R = [
+                1  0  0;
+                0  c -s;
+                0  s  c ];
         end
         function R = y(theta)
             % Y returns a rotation of THETA radians about the coordinate
             % y-axis.
             %
             %   See also X and Z.
-            
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            R = ???;
+            s = sin(theta);
+            c = cos(theta);
+            R = [
+                c 0 s;
+                0 1 0;
+                -s 0 c ];
         end
         function R = z(theta)
             % Z returns a rotation of THETA radians about the coordinate
             % z-axis.
             %
             %   See also X and Y.
-
-            % ------------- ENTER YOUR CODE HERE -------------
-            % 	add lines and change variable names as needed/preferred
-            R = ???;
+            s = sin(theta);
+            c = cos(theta);
+            R = [
+                c -s 0;
+                s  c 0;
+                0  0 1 ];
         end
         function R = cardan(alpha, beta, gamma)
             % CARDAN returns a rotation about the roll-pitch-yaw axes.

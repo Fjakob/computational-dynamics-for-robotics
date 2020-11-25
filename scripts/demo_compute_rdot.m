@@ -102,12 +102,16 @@ omega_b2 = simplify(expand(omega_b2))  %#ok<NOPTS> (6)
 %% From Symbolic Math to Numerical Expressions
 % In this example, we'll create numerical functions from the analytical
 % ones with the help of <matlab:doc('matlabFunction') matlabFunction>. Here
-% we'll return the result as a function handle, but we could also save it
-% to a '.m' file by passing the (key, value) pair |('File', 'FileName.m')|;
-% that is |matlabFunction(R_sb,'File', 'R_sb_fct.m', 'Vars', gamma)|.
+% we'll return the result as a function handle
 
 R_sb_fct = matlabFunction(R_sb, 'Vars', gamma);
 omega_b_fct = matlabFunction(omega_b, 'Vars', [gamma, gamma_dot]);
+
+%% 
+% we could also save the symbolic expression to a '.m' file by passing the
+% (key, value) pair |('File', 'FileName.m')|; that is
+
+% matlabFunction(R_sb,'File', 'R_sb_fct.m', 'Vars', gamma)
 
 %%
 % Now define numerical values for |gamma| and generate numerical

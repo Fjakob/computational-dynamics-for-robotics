@@ -1,5 +1,5 @@
-% INTEGRATE_RDOT A script for animating a frame by integrating Rdot(t), the
-% time rate of change of a rotation matrix R(t).
+% INTEGRATE_OMEGA_HAT A script for animating a frame by integrating the
+% unit axis of rotation $\hat{\omega}$.
 %
 %   See also DEMO_COMPUTE_RDOT.
 
@@ -76,10 +76,12 @@ delta_t = 2*pi/n;
 snapshots = Utils.takesnapshot(env); % save the current figure
 for i = 1:n
     % Compute derivative using one of the equations above
-    R_dot_sc = omega_s_mat * R_sc;
+    % R_dot_sc = omega_s_mat * R_sc; <- don't need this anymore!
     
-    % computer the Euler step
-    R_sc = R_sc + R_dot_sc  * delta_t;
+    % computer the Euler step using exponential coordinates
+    R_sc = (eye(3) + sin(delta_t) * omega_s_mat ...
+        + (1 - cos(delta_t)) * omega_s_mat^2) * R_sc;
+    % R_sc = expm(delta_t* omega_s_mat) * R_sc; % <- also also valid!
     c.R = R_sc;
     drawnow();
     
@@ -88,4 +90,4 @@ for i = 1:n
 end
 
 % save a video
-Utils.savesnapshots(snapshots, 'integrate_rdot.mp4');
+Utils.savesnapshots(snapshots, 'integrate_omega_hat.mp4');
