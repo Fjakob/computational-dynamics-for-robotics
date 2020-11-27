@@ -1,7 +1,16 @@
 = Computational Dynamics for Robotics
 :toc:
 :toc-placement!:
-:repo: link:https://github.tik.uni-stuttgart.de/inm-RAMlab/LectureCDR/tree
+:sectlinks:
+
+:ramlab-url: https://github.tik.uni-stuttgart.de/inm-RAMlab/LectureCDR
+:ramlab-repo: {ramlab-url}/tree
+:ramlab-github-name: {ramlab-url}[inm-RAMlab/LectureCDR]
+:ramlab-remote-name: ramlab
+:ramlab-branch-name: ramlab-master
+:stud-id: pass:q[`st123456`]
+:stud-repo: https://github.tik.uni-stuttgart.de/{stud-id}/LectureCDR
+:git-vids: https://ilias3.uni-stuttgart.de/goto.php?target=mcst_2213078
 
 ifdef::env-github[]
 :tip-caption: :bulb:
@@ -19,25 +28,159 @@ toc::[]
 
 == FAQ
 
-How do I checkout the templates (code with no solutions) for a particular Exercise?::
+=== How do I get the source code listed in the Exercises?
+
+[%collapsible]
+.Expand for answer
+====
+You fork the course repository.  Let's say your student ID number is {stud-id}, then
+
+. Log into https://github.tik.uni-stuttgart.de using the short form of your ID (e.g., {stud-id}) and password
+. Fork the course repository {ramlab-github-name}
+. clone your (forked) version of the repository (e.g., {stud-repo})
+
+For a more detailed explanation, watch the {git-vids}[_Getting Started_] git tutorial video.
+====
+
+=== How do I integrate {ramlab-github-name}'s source code with mine?
+
+[%collapsible]
+.Expand for answer
+====
+You need to merge your master branch with {ramlab-github-name}'s master branch.
+For a more detailed explanation, watch the {git-vids}[_Fetch and Merge_] git
+tutorial video.
+====
+
+=== How do I `checkout` (and `merge`) code from {ramlab-github-name} instead of my remote repository?
+
+[%collapsible]
+.Expand for answer
+====
+You add {ramlab-github-name} as an additional remote repository.  Let's say your student ID
+number is `st123456` and you've cloned your forked copy of the course
+repository.  Then, there are two steps to take in the initial setup:
+
+// re: subs=attributs+ see https://github.com/asciidoctor/asciidoctor-pdf/issues/888
+--
+[source, matlab, subs=attributes+]
+----
+!git remote add {ramlab-remote-name} https://github.tik.uni-stuttgart.de/inm-RAMlab/LectureCDR  // <.>
+!git fetch {ramlab-remote-name} // <.>
+----
+<.> add {ramlab-github-name}'s URL as a remote repository and name it `{ramlab-remote-name}` (*NOTE*: we named the repo `original` in a tutorial {git-vids}[video])
+<.> tell git to "fetch" the repository information (tags, branches, commits, etc.)
+--
+
+After fetching, you can `checkout` and `merge` remote branches in {ramlab-github-name}
+
+[source, matlab, subs=attributes+]
+----
+!git checkout {ramlab-remote-name}/master // <.>
+!git checkout master // <.>
+!git merge {ramlab-remote-name}/master // <.>
+----
+<.> checkout a remote branch and explore the code (if you followed the {git-vids}[tutorial], you would do `original/master`)
+<.> switch back to your development branch of the code, which fetches, pulls, and pushes from your remote repository {stud-repo}
+<.> merge your code with the master branch of {ramlab-github-name} (see merge tutorial {git-vids}[video] for more info)
+--
+====
+
+[#faq-fetch]
+=== How do I checkout the templates (code with no solutions) for a particular Exercise?
+
+[%collapsible]
+.Expand for answer
+====
 For Exercise _N_, you would checkout `vN.0-templates`.  For example, to get the templates for Exercise 2, type
 ```matlab
 !git checkout v2.0-templates
 ```
+====
 
-How do I checkout the solution for a particular Exercise?::
+=== How do I checkout the solution for a particular Exercise?
+
+[%collapsible]
+.Expand for answer
+====
 For Exercise _N_, you would checkout `vN.0`.  For example, to get the solutions for Exercise 1, type
 ```matlab
 !git checkout v1.0
 ```
+====
 
+////
+=== Can I track changes in {ramlab-github-name} without using `git checkout {ramlab-remote-name}/master` all the time?
+
+You can create a branch that tracks {ramlab-github-name} and syncs with just `git pull`
+
+[source, matlab, subs=attributes+]
+----
+!git checkout -b {ramlab-branch-name} --track {ramlab-remote-name}/master // <1>
+----
+<1> create a branch named `{ramlab-branch-name}` that tracks changes to {ramlab-github-name} and switch to that branch
+
+You can then `pull` (and even merge) changes as you like
+[source, matlab, subs=attributes+]
+----
+!git checkout {ramlab-branch-name}
+!git pull
+!git checkout master // <1>
+!git merge {ramlab-branch-name}
+----
+<1> this is optional, *do not* run this if you don't want to merge branches!
+////
+
+=== How do I change the local name of a remote repository?
+
+[%collapsible]
+.Expand for answer
+====
+Say you named the remote `foo`.  To change the name of the remote from `foo` to `bar`, type
+```matlab
+!git remote rename foo bar
+```
+====
+
+=== How do I reset my `master` branch to match the source code at a particular point in time?
+
+[%collapsible]
+.Expand for answer
+====
+Say you want your repository to match the source code in a specific commit
+(snapshot) of a local or remote repository exactly.  First, commit any changes
+just in case you want to change back to the current state your code is in.
+
+```matlab
+!git add <insert list of untracked files you want to save a snapsnot of>
+!git commit -a
+```
+
+Then you would `reset` your repository to a desired state.  Make sure to commit
+*before* calling `reset` as all local changes to your local repository *will be
+deleted.*  Here are a few use cases
+
+. I want to revert to a particular tag in {ramlab-github-name}, say the v2.0 templates.
+.. First, add {ramlab-github-name} as a remote (see <<faq-fetch, How do I checkout (and_merge) code from inm-RAMlab/LectureCDR instead of my remote repository?>>)
+.. Then,
++
+```matlab
+!github reset --hard v2.0-templates
+```
+. I commited my files *before* I merged, but I made a mistake while merging; I want to go back to my last commit
+```matlab
+!github reset --hard HEAD
+```
+
+For more help, read the docs at https://git-scm.com/docs/git-reset.
+====
 
 == Branches
 Here we list a summary of branches and tags in the repository.
 
 master:: The main branch, where the current templates and solutions are kept.  We also maintain the official version of the library here.
-Ex1:: Ex1 contains solutions to Exercise 1 ({repo}/v1.0[v1.0]).
-Ex2:: Ex2 contains templates and solutions to Exercise 2 ({repo}/v2.0-templates[v2.0-templates], {repo}/v2.0[v2.0]).
+Ex1:: Ex1 contains solutions to Exercise 1 ({ramlab-repo}/v1.0[v1.0]).
+Ex2:: Ex2 contains templates and solutions to Exercise 2 ({ramlab-repo}/v2.0-templates[v2.0-templates], {ramlab-repo}/v2.0[v2.0]).
 sandbox:: deprecated; this branch has been deleted from the repo.
 
 == Contributing
