@@ -17,6 +17,21 @@ IMPORTANT: The code will be updated as we go along the semester.
 
 toc::[]
 
+== FAQ
+
+How do I checkout the templates (code with no solutions) for a particular Exercise?::
+For Exercise _N_, you would checkout `vN.0-templates`.  For example, to get the templates for Exercise 2, type
+```matlab
+!git checkout v2.0-templates
+```
+
+How do I checkout the solution for a particular Exercise?::
+For Exercise _N_, you would checkout `vN.0`.  For example, to get the solutions for Exercise 1, type
+```matlab
+!git checkout v1.0
+```
+
+
 == Branches
 Here we list a summary of branches and tags in the repository.
 
