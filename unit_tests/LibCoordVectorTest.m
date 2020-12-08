@@ -7,7 +7,7 @@ classdef LibCoordVectorTest < matlab.unittest.TestCase
     %       testLabel - Tests the tree structure of the Label graphic
     %       testArrow - Tests the tree structure of the Arrow graphics
     %       testColor - Tests that color changes for all graphics
-    %       testCoords - Tests coordinate values in different frames
+    %       testCoords - Tests coordinate values in  different frames
     %
     %   Example:
     %       runtests('LibCoordVectorTest')
