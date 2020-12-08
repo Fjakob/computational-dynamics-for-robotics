@@ -126,11 +126,10 @@ classdef EnvironmentObject < handle
             % getT_sb Returns the body to space transform in SE(3)
             
             T_pb = obj.get('Matrix');
-            if strcmp(obj.get('Tag'), '{s}')
-                T_sb = T_pb;
-            else
-                T_sb = obj.Parent.getT_sb() * T_pb;
-            end
+            T_sb = T_pb;
+            % this is generally incorrect, we'll fix this method in a
+            % future exercise problem; it only works in cases where the
+            % parent frame is coincident with {s}.
         end           
     end
 end
