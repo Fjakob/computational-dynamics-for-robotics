@@ -20,6 +20,9 @@ function R = expm3(so3)
 %
 %   See also R3_TO_SO3 and EXPM6
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 % compute the exponential coordinates expc = w_hat * theta
 expc = Math.so3_to_r3(so3);
 if norm(expc) == 0

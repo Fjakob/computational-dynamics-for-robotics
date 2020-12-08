@@ -31,6 +31,9 @@ classdef LibMathTest < matlab.unittest.TestCase
     %   Example:
     %       runtests('LibMathTest')
     
+    % AUTHORS:
+    %   Nelson Rosa nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+    
     methods (Test)
         function testR3ToLilSo3(testCase)
             % testR3ToLilSo3 Compares symbolic definition of w to [w].

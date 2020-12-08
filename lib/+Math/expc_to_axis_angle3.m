@@ -20,6 +20,9 @@ function [unitAxis, angle] = expc_to_axis_angle3(expc)
 %
 %   See also EXPC_TO_AXIS_ANGLE6
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 angle = norm(expc(1:3));
 if(angle == 0)
     warning('expc does not have a unique rotation axis; theta = 0.');

@@ -23,6 +23,10 @@ function T = expm6(se3)
 %
 %   See also R3_TO_SO3 and EXPM6
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 % compute the exponential coordinates expc = S * theta
 expc = Math.se3_to_r6(se3);
 if norm(expc) == 0

@@ -10,6 +10,9 @@ function R = R_a_to_b(a, b)
 %
 %       >> [0 0 -1; 0 1 0; 1 0 0];
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 na = norm(a);
 nb = norm(b);
 

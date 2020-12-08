@@ -18,6 +18,10 @@ function X = adjoint(T)
 %
 %   See also RP_TO_T
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 [R, p] = a Math package function that picks T apart;
 p_mat = a Math package function that returns [p] in so(3)
 Z = a zero matrix of appropriate size

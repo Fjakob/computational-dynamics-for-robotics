@@ -12,6 +12,10 @@ function V = se3_to_r6(Vmat)
 %
 %   See also R6_TO_SE3
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 w = a function in the Math package that converts from so3 to R^3
 v = part of Vmat that contains v
 V = w and v;

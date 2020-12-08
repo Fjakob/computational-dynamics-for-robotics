@@ -1,90 +1,115 @@
-% ENVIRONMENT Documentation pending.
 classdef Environment < handle
-    % Public Properties
+    % Environment Represents a spatial environment
+    %   The environment is a 3D 'physical' space with coordinates.  We
+    %   assume that you have chosen an origin and length scale (e.g.,
+    %   inches, meters, light-years) for your fixed space frame {s}.  All
+    %   additional frames and vectors that you add to the environment
+    %   are defined relative to {s}.
+    %
+    %   In practice, the environment is a Matlab figure.  The frame {s} is
+    %   defined as the origin of the figure's graphical coordinate system
+    %   by default.  The frame {s} can be customized to the user's liking,
+    %   including its location in the graphical coordinate system.
+    %
+    %   Environment Properties:
+    %       SpaceFrame - The fixed frame all objects are relative to
+    %       Axes - The handle to the internal figure's axes
+    %
+    %   Environment Methods:
+    %      Environment - The constructor for this class
+    %      delete - Closes the figure and deletes the figure handle
+    %      resetOutput - Resizes the axes limits
+    %      show - shows the fixed frame
+    %      hide - hides the fixed frame
+    %
+    %   See also EnvironmentObject
+
+    % AUTHORS:
+    %   Nelson Rosa nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v22
+    %   C. David Remy remy@inm.uni-stuttgart.de 10/12/2018, Matlab R2018a, v21
+
     properties
-        fig % handle to the figure where the graphical output happens
+        SpaceFrame % The envrionment's fixed frame in space
     end
-    % Constant Properties
-    properties (Constant)
-        R = eye(3);
-        p = zeros(3,1);
-        % T = [Environment.R Environment.p; zeors(1,3) 1];
+    properties (Dependent)
+         % Axes - A reference to the axes handle of the underlying figure
+         %  set.Axes Sets the x, y, z limits of the axes to the 6D array
+         %  get.Axes Returns a handle to the figure's axes
+         %
+         %  Example:
+         %      obj.Axes = [-1 1 -5 5 -2 2];
+         %      axes = obj.Axes;
+        Axes
     end
     % Private Properties
-    properties (SetAccess = private, GetAccess = private)
-        % Handles to the graphical output
-        ax;
-        light_handle;
-        % Indicates whether the graphical (inertial) axis are visible or
-        % not.
-        axVisible = 1;
-        S;
+    properties (Access = private)
+        light_handle
+        Figure % The handle to the figure
     end
-    
-    % Public Methods
     methods
-        % Constructor creates a graphics environment
+        %% Constructor
         function obj = Environment()
-            obj.fig = figure;
-            set(obj.fig, 'Color', [0.95 0.95 0.95]);
-            
+            % allow LaTeX markup in strings
             % from https://www.mathworks.com/matlabcentral/answers/254964
-            set(obj.fig, 'DefaultTextInterpreter', 'latex');
-            
-            obj.ax  = axes;
+            obj.Figure = figure('Visible', 'off', ...
+                'Color', [0.95 0.95 0.95], ...
+                'DefaultTextInterpreter', 'latex');
+                                  
             obj.light_handle = camlight('right');
             resetOutput(obj);
+            
+            obj.SpaceFrame = Frame(obj.Axes, eye(4));
+            obj.SpaceFrame.set('Tag', '{s}');
+            obj.SpaceFrame.Name = 's';
+            obj.SpaceFrame.hide();
+            obj.Figure.Visible = 'on';
         end
-        % Destructor closes the figure upon deletion
+        %% Property Setter/Getter Methods
+        %   The scope (private, protected, public) of these methods is
+        %   defined in the related properties block.        
+        function axes = get.Axes(obj)
+            % get.Axes returns the figure's axes handle
+                        
+            axes = gca(obj.Figure);
+        end
+        function set.Axes(obj, axes)
+            % set.Axes sets the x, y, and z limits of figure's axes handle
+            
+            axis(obj.Axes, axes);
+        end
+        %% Public Methods        
         function delete(obj)
-            if isvalid(obj.fig)
-                close(obj.fig);
+        % delete Closes the figure upon deletion
+        
+            if isvalid(obj.Figure)
+                close(obj.Figure);
             end
         end
-        % Update output
         function resetOutput(obj)
-            figure(obj.fig);
-            if obj.axVisible
-                axis(obj.ax, 'on');
-            else
-                axis(obj.ax, 'off');
-            end
-            axis(obj.ax, 'equal');
-            view(obj.ax, [-37.5,30])
-            axis(obj.ax, 'tight');
-            a = axis(obj.ax);
-            axis(obj.ax, a+[-1,1,-1,1,-1,1]);
-            box(obj.ax, 'on')
-            grid(obj.ax, 'on')
-            camproj(obj.ax, 'perspective');
+            % resetOutput Expands the axes limits to fit the displayed
+            % graphics
+            
+            figure(obj.Figure);
+            axes = obj.Axes;
+            axis(axes, 'equal');
+            view(axes, [-37.5,30])
+            axis(axes, 'tight');
+            a = axis(axes);
+            axis(axes, a + [-1,1,-1,1,-1,1]);
+            box(axes, 'on')
+            grid(axes, 'on')
+            camproj(axes, 'perspective');
             camlight(obj.light_handle, 'right')
-            view(obj.ax, [125, 25])
-        end
-        % Toggle the visibility of the graphical axis:
-        function toggleAxis(obj)
-            obj.axVisible = 1 - obj.axVisible;
-            resetOutput(obj);
+            view(axes, [125, 25])
         end
         function show(obj)
-            if isa(obj.S, 'Frame')
-                obj.S.show();
-            else
-                obj.S = Frame(obj, Environment.R);
-                obj.S.name = '{s}';
-                % and it shows upon creation
-            end
+            % show Shows the space frame in the figure
+            obj.SpaceFrame.show();
         end
         function hide(obj)
-            if isa(obj.S, 'Frame')
-                obj.S.hide();
-            end
+            % hide Hides the space frame in the figure
+            
+            obj.SpaceFrame.hide();
         end
     end
-    methods(Static) 
-        function T = getframe()
-            T = Environment.R;
-        end
-    end
-    % Private Methods
-    % - none
 end

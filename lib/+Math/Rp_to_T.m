@@ -15,6 +15,10 @@ function T = Rp_to_T(R, p)
 %
 %   See also T_TO_RP and RPS_TO_T
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 if R = [], then set R to the identity element in SO(3)
 %   * you can test if R = [] using isempty(R)
 if p = [], then set p to the zero vector

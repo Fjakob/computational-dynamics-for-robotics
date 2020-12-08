@@ -22,6 +22,9 @@ function T = Rps_to_T(R, p, s)
 %
 %   See also RP_TO_T
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
         if isempty(s)
             s = [1; 1; 1];
         elseif isscalar(s)

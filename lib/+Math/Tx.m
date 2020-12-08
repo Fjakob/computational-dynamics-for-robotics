@@ -12,6 +12,10 @@ function y = Tx(T, x)
 %
 %   See also T_TO_RP
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 [R, p] = T decomposed;
 %   * there's a function in the Math package that will do this for you
 y = ???;

@@ -10,5 +10,8 @@ function Rinv = R_inverse(R)
 %
 %   See also T_INVERSE
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 Rinv = transpose(R);
 end

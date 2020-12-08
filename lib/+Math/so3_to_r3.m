@@ -12,5 +12,8 @@ function w = so3_to_r3(wmat)
 %
 %   See also R3_TO_SO3
 
+% AUTHORS:
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 w = [wmat(3, 2); wmat(1, 3); wmat(2, 1)];
 end

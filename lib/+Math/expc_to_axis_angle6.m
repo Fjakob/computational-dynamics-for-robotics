@@ -23,6 +23,10 @@ function [unitscrew, angle] = expc_to_axis_angle6(expc)
 %
 %   See also EXPC_TO_AXIS_ANGLE6
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 w = expc(1:3);
 v = expc(4:6);
 

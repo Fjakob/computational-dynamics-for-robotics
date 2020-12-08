@@ -13,6 +13,10 @@ function [R, p] = T_to_Rp(T)
 %
 %   See also RP_TO_T and RPS_TO_T
 
+% AUTHORS:
+%   <------------ Add your info! ------------>
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+
 R = ???;
 p = ???;
 end
