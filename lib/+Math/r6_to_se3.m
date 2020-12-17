@@ -16,10 +16,7 @@ function Vmat = r6_to_se3(V)
 %   <------------ Add your info! ------------>
 %   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
 
-w_mat = Math.r3_to_so3(part of V that contains w)
-%   * FYI: Math.r3_to_so3 use to be Rot.skew
-%   * Notice the use of dot notation when calling other functions in the 
-%     Math package!
-v = part of V that contains v
-Vmat = matrix representation of the twist V using w_mat and v
+w_mat = Math.r3_to_so3(V);
+v = V(4:6);
+Vmat = [w_mat v; zeros(1,4)];
 end

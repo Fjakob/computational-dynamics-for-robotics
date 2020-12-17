@@ -17,6 +17,6 @@ function [R, p] = T_to_Rp(T)
 %   <------------ Add your info! ------------>
 %   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
 
-R = ???;
-p = ???;
+R = T(1:3, 1:3);
+p = T(1:3, 4);
 end

@@ -48,7 +48,7 @@ classdef LibMathTest < matlab.unittest.TestCase
             % testAdjoint Compares numeric output to known solution
             
             T = [1 0 0 1; 0 0 1 2; 0 -1 0 3; 0 0 0 1];
-            actual = Math.adjoint(T);
+            actual = Math.AdT(T);
             expected = [
                 1  0  0  0  0  0;
                 0  0  1  0  0  0;

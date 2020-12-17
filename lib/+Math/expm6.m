@@ -30,19 +30,19 @@ function T = expm6(se3)
 % compute the exponential coordinates expc = S * theta
 expc = Math.se3_to_r6(se3);
 if norm(expc) == 0
-    T = eye(3);
+    T = eye(4);
 else
     [S, theta] = Math.expc_to_axis_angle6(expc);
     
-    w_mat = matrix representation of w component in S
-%       * use Math.r3_to_so3;
-    v = v component in S
+    w_mat = Math.r3_to_so3(S(1:3));
+    v = S(4:6);
     
-    R = a rotation matrix rotated theta angles about [w]
-%       * use Math.expm3
+    R = Math.expm3(w_mat * theta);
     
-    Gv = G(theta) * v;
+    w_matv = w_mat * v;
+    Gv = v * theta + (1 - cos(theta)) * w_matv ...
+        + (theta - sin(theta)) * (w_mat * w_matv);
     
-    T = a matrix in SE(3) composed of R, Gv, zeros(1,3), and 1
+    T = [R Gv; zeros(1,3) 1];
 end
 end

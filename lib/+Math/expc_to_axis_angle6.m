@@ -31,13 +31,14 @@ w = expc(1:3);
 v = expc(4:6);
 
 % choose normalization factor
-angle = ???;
-%   * value depends on whether norm(w) is zero or not zero; maybe use an if
-%     statement here?
+angle = norm(w);
+if angle == 0
+    angle = norm(v);
+end
 
 if(angle == 0)
     warning('expc does not have a unique rotation axis; theta = 0.');
 end
 
-unitscrew = expc normalized to "unit" length;
+unitscrew = expc / angle;
 end
