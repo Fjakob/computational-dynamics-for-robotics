@@ -1,4 +1,4 @@
-classdef DispClassBPrivate
+classdef DispAClassBPrivate
     properties
         A
     end
@@ -6,7 +6,7 @@ classdef DispClassBPrivate
         B
     end
     methods
-        function obj = DispClassBPrivate(a)
+        function obj = DispAClassBPrivate(a)
             obj.A = a;
             obj.B = 0;
         end

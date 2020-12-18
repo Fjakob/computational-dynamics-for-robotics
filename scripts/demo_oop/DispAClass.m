@@ -1,9 +1,9 @@
-classdef DispClass
+classdef DispAClass
     properties
         A
     end
     methods
-        function obj = DispClass(a)
+        function obj = DispAClass(a)
             obj.A = a;
         end
         function dispA(obj, n)
