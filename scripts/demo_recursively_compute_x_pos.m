@@ -10,9 +10,9 @@ function x = demo_recursively_compute_x_pos(n, delta_x)
   %   Example:
   %     n = 3;
   %     delta_x = ones(1, n);
-  %     x = demo_recursion_compute_x_pos(n, delta_x)
+  %     x = demo_recursively_compute_x_pos(n, delta_x)
   %
-  %     >> 15
+  %     >> 3
 
   fprintf('computing frame {%d} relative to {0}...', n);
   if n == 0 
