@@ -103,7 +103,9 @@ classdef EnvironmentObject < handle
             end
             
             if ischar(X)
-                Utils.draw(obj, X, Y, Z).moveGraphic(T);
+                % Utils.draw(obj, X, Y, Z).moveGraphic(T);
+                obj = Utils.draw(obj, X, Y, Z);
+                obj.moveGraphic(T);
             elseif isa(X, 'EnvironmentObject')
                 % base case 1: stop after EO
                 X.set('Parent', obj.RootGraphic).moveGraphic(T);
