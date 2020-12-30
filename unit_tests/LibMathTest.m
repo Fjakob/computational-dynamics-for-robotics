@@ -7,7 +7,7 @@ classdef LibMathTest < matlab.unittest.TestCase
     %
     %   LibMathTest Methods:
     %       testR3ToLilSo3 - Tests conversion from R^3 to so(3)
-    %       testAdjoint - Tests mapping from T to Ad(T)
+    %       testAdjointT - Tests mapping from T to Ad(T)
     %       testExpc6WithAngularVelocity - Tests exponential coordinates
     %       testExpc6WithNoAngularVelocity - Tests exponential coordinates
     %       testExpm6PureRotation - Test matrix exp of zero pitch screw
@@ -21,6 +21,8 @@ classdef LibMathTest < matlab.unittest.TestCase
     %       testTInverse - Tests computation of the inverse of T in SE(3)
     %       testTToRp - Tests computation of the inverse of T in SE(3)
     %       testTx - Test multiplication of T in SE(3) to x in R^3
+    %       testAdjointV - Test mapping from V to [adV]
+    %       testSpatialInertia - Tests conversion to spatial inertia
     %
     %   Note:
     %       The numerical tolerances for equality has default values that
@@ -44,8 +46,8 @@ classdef LibMathTest < matlab.unittest.TestCase
             expected = [0 -w3 w2; w3 0 -w1; -w2 w1 0];
             testCase.verifyEqual(actual, expected);
         end
-        function testAdjoint(testCase)
-            % testAdjoint Compares numeric output to known solution
+        function testAdjointT(testCase)
+            % testAdjointT Compares numeric output to known solution
             
             T = [1 0 0 1; 0 0 1 2; 0 -1 0 3; 0 0 0 1];
             actual = Math.AdT(T);
@@ -142,7 +144,7 @@ classdef LibMathTest < matlab.unittest.TestCase
                 0 0 0 1
                 ];
             testCase.verifyEqual(actual, expected, 'AbsTol', 1e-9);
-        end        
+        end
         function testR6ToLilSe3(testCase)
             % testR6ToLilSe3 Compares to a known solution
             %   We test to make sure for screw V = [w; v]
@@ -179,14 +181,14 @@ classdef LibMathTest < matlab.unittest.TestCase
             actual = Math.R_a_to_b(a, b);
             expected = [-1 0 0; 0 -1 0; 0 0 1];
             testCase.verifyEqual(actual, expected, 'AbsTol', 1e-9);
-        end     
+        end
         function testRPToT(testCase)
             % testRPToT Compares to a known solution
             
             R = [0.7071 0 0.7071; 0 1 0; -0.7071 0 0.7071];
             p = [1; 2; 3];
             actual = Math.Rp_to_T(R, p);
-            expected = [0.7071 0 0.7071 1; 0 1 0 2; 
+            expected = [0.7071 0 0.7071 1; 0 1 0 2;
                 -0.7071 0 0.7071 3; 0 0 0 1];
             testCase.verifyEqual(actual, expected);
         end
@@ -202,7 +204,7 @@ classdef LibMathTest < matlab.unittest.TestCase
             % testRPToT Compares to a known solution
             
             T = [1 0 0 1; 0 0 1 2; 0 -1 0 3; 0 0 0 1];
-            actual = Math.T_inverse(T); 
+            actual = Math.T_inverse(T);
             expected = [1 0 0 -1; 0 0 -1 3; 0 1 0 -2; 0 0 0 1];
             testCase.verifyEqual(actual, expected);
         end
@@ -215,7 +217,7 @@ classdef LibMathTest < matlab.unittest.TestCase
             pexp = [1; 2; 3];
             testCase.verifyEqual(Ract, Rexp);
             testCase.verifyEqual(pact, pexp);
-        end        
+        end
         function testTx(testCase)
             % testLilSe3ToR6 Compares to a known solution
             
@@ -225,5 +227,49 @@ classdef LibMathTest < matlab.unittest.TestCase
             expected = [1.7071; 2; -3.7071];
             testCase.verifyEqual(actual, expected);
         end
+        function testAdjointV(testCase)
+            % testAdjointV Compares output to known solution
+            syms w v [3 1] real;
+            V = [w; v];
+            actual = Math.adV(V);
+            expected =  [
+                0 -w3 w2 0 0 0;
+                w3 0 -w1 0 0 0;
+                -w2 w1 0 0 0 0;
+                0 -v3 v2 0 -w3 w2;
+                v3 0 -v1 w3 0 -w1;
+                -v2 v1 0 -w2 w1 0
+                ];
+            
+            testCase.verifyEqual(actual, expected);
+        end
+        function testSpatialInertia(testCase)
+            % testSpatialInertia Compares output to known solution
+            
+            m = 5;
+            Icom = diag([1; 2; 3]);
+            
+            w = [1; 1; 0] / sqrt(2);
+            theta = 2 * pi / 3;
+            wmat = Math.r3_to_so3(w);
+            R = Math.expm3(wmat * theta);
+            p = [1; -3; 4];
+            
+            T_ab = Math.Rp_to_T(R, p);
+            actual = Math.mIcom_to_spatial_inertia(m, Icom, T_ab);
+            
+            % TODO: turn into a problem and test for cross terms
+            %   students should compute I_a by hand and enter results
+            %   here.
+            
+            % Steiner's theorem
+            Icom_a = R * Icom * transpose(R) + m * (p'*p*eye(3) - p * p');
+            
+            % mass
+            mI = m * eye(3);
+            
+            testCase.verifyEqual(actual(1:3, 1:3), Icom_a, 'AbsTol', 1e-9);
+            testCase.verifyEqual(actual(4:6, 4:6), mI, 'AbsTol', 1e-9);
+        end        
     end
 end
