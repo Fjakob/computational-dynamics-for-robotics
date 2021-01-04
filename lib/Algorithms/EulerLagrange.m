@@ -259,7 +259,7 @@ classdef EulerLagrange < handle
             
             qdot = obj.GeneralizedVelocities;
             n = length(qdot);
-            c = Utils.simplify(zeros(n,1));
+            c = sym(zeros(n,1));
 %               + write a triple loop to compute 
 %                 c(i) = \Gamma(i, j, k) * qdot(j) * qdot(k);
             obj.CoriolisCentripetalForces = c;
