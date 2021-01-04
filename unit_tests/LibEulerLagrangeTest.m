@@ -46,9 +46,9 @@ classdef LibEulerLagrangeTest < matlab.unittest.TestCase
             el = EulerLagrange(ke, pe, q, qdot);
             qact = el.GeneralizedCoordinates;
             qdotact = el.GeneralizedVelocities;
-            Mact = Utils.simplify(el.MassMatrix);
-            cact = Utils.simplify(el.CoriolisCentripetalForces);
-            gact = Utils.simplify(el.GravitationalForces);
+            Mact = simplify(el.MassMatrix);
+            cact = simplify(el.CoriolisCentripetalForces);
+            gact = simplify(el.GravitationalForces);
             % compare against expected values
             Mexp = ???;
 %               * you've computed this value!  Input your solution from the 
