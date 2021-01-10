@@ -68,61 +68,38 @@ J_s = sym(zeros(6, n));  % J_s at i = 0 (we recurse over the cols of J_s)
 for i = 1:n
     % compute the joint axis S_i = (w_i, v_i) and displacement T_i
     w_i = [0; 0; 1]; % angular velocity of S_i
-    v_i = linear velocity of link i in {0} coordinates
-%       * b/c we are dealing with revolute joints, this will be a function 
-%         of [w_i], p_i, and Math.r3_to_so3
-%       * still stumped?  The hints in the 3R kinematics problem will help
+    v_i = -Math.r3_to_so3(w_i) * p;
     S_i = [w_i; v_i];
     
-    Smat_i = [S_i]
-    T_i = ???
-%       * rigid-body displacement resulting from a rotation of q(i) radians 
-%         about joint axis i
-%       * this will be a function of [S_i], q(i), and the matrix
-%         exponential Math.expm6
+    Smat_i = Math.r6_to_se3(S_i);
+    T_i = Math.expm6(Smat_i * q(i));
     
     % compute J_s and V_s for link i in {s} coordinates
     AdT = Math.AdT(PoE);
-    J_s(:, i) = S_i displaced by an amount q(1) about joint axis 1, q(2)
-                about joint axis 2, ..., q(i-1) about joint axis i-1
-%       * this is just the PoE formula for screw axis i
-%       * reading through the 3R kinematics problem might be helpful here
-    V_s = twist i of link i in terms of qdot
-%       * we can use the Jacobian J_s for this mapping    
+    J_s(:, i) = AdT * S_i;
+    V_s = J_s * qdot;
     
     % center of mass (com) of link i in {0} coordinates
     %   1) compute com and Mcom at robot's home position (i.e., q = 0)    
-    com = an expression in R^3 in terms of p_i and r(i)
+    com = p + [r(i); 0; 0];
     Mcom = Math.Rp_to_T([], com);
     
     %   2) displace com to new location when q is arbitrary
-    T_0com = an expression in terms of PoE, T_i, and Mcom
-%       * this transform is similar to how we displaced M in the 3R 
-%         kinematics problem (see rrr_kinematics.m for details)
+    T_0com = PoE * T_i * Mcom;
     
     % compute I_i in {s} coordinates
-    Icom = moment of inertia Izz(i);
-%       * you only need to change a single element of Icom
-%       * we are dealing with a planar system that rotates about its z-axis
-    
-    I_s = spatial inertia in {s} coordinates
-%       * write in terms of m(i), Icom, T_0com, and 
-%         Math.mIcom_to_spatial_inertia
+    Icom(3,3) = Izz(i);
+    I_s = Math.mIcom_to_spatial_inertia(m(i), Icom, T_0com);
 
     % iteratively compute total PE and KE of links 1 to i
-    pe = ???;
-%       * pe_i = pe_{i-1} + pe of link i using spatial quantities    
-    ke = ???;
-%       * ke_i = ke_{i-1} + ke of link i using spatial quantities
+    pe = pe + m(i) * g * T_0com(2, 4);
+    ke = ke + 0.5 * transpose(V_s) * I_s * V_s;
     
     % update p to be origin of frame {i+1} at robot's home position (q = 0)
-    p = ???
-%       * p_{i+1} = an expression in R^2 in terms of p_i and L(i)
-
+    p = p + [L(i); 0; 0];
     % update PoE to be displacement due to arbitrary rotations q(1), q(2),
-    % ..., q(i) about joint axes 1 to i    
-    PoE = ???
-%       * PoE_{i+1} = PoE_i * T_i
+    % ..., q(i) about joint axes 1 to i
+    PoE = PoE * T_i;
 end
 
 %% Save Equations of Motion to File

@@ -29,21 +29,8 @@ clear;
 n = 3;
 
 syms q 'q%ddot' [n, 1] real
-symbolic 'm' 'L' and 'r'
-%   * m = [m1; m2; m3] after its definition; similarly for L and r
-%   * create 3 n x 1 vector of symbolic variables of type real
-%   * your answer should be in terms of |syms|, m, L, r, n, and real
-
-symbolic 'Izz'
-%   % Izz = [I1zz; I2zz; I3zz] after its definition
-%   * create an n x 1 vector of symbolic variables of type real
-%   * use the '%d' format specifier to customize the name of the elements
-%     in Izz
-%   * your answer should be in terms of |syms|, Izz, n, %d, and real
-
-symbolic 'g'
-%   * create a scalar symbolic variables of type real
-%   * your answer should be in terms of syms, g, and real
+syms m L 'I%dzz' r [n, 1] real
+syms g real
 
 %% Base Case
 % The base cases for relevant quantities are defined here.  The variable
@@ -68,36 +55,32 @@ p = ???; % p at i = 1
 %   * use your base case solution from the corresponding problem here
 %}
 % </+>
+ke = 0; % ke at i = 0
+pe = 0; % pe at i = 0
+phi = 0; % phi at i = 0
+p = [0; 0]; % p at i = 1
 
 %% Iterative (Recursive) Formulation of the Dyanmics
 for i = 1:n
-    phi = your recursive definition for phi
-%       * phi_i = an expression in terms of phi_{i-1} and q(i)
-%       * after the assignment phi should be interpreted as phi = phi_i
+    phi = phi + q(i);
     
     % center of mass (com) of link i
-    com = an expression in terms of p_i, r(i), and phi_i
+    com = p + r(i) * [cos(phi); sin(phi)];
     
     % compute velocities
     Jw = jacobian(phi, q);
     Jv = jacobian(com, q);
     
-    phidot = qdot mapped into (projected onto) angular velocity space
-%       * this is a primary function of the Jacobian
-    comdot = qdot mapped into (projected onto) linear velocity space
-%       * this is a primary function of the Jacobian
+    phidot = Jw * qdot;
+    comdot = Jv * qdot;
     
     % iteratively compute total PE and KE of links 1 to i
-    pe = ???;
-%       * pe_i = pe_{i-1} + pe of link i    
-    ke = ???;
-%       * ke_i = ke_{i-1} + ke of link i
-%       * ke of a planar rigid body = 1/2 m * v^2 + 1/2 I_zz w^2; rewrite
-%         using variables applicable to link i
+    pe = pe + m(i) * g * com(2);
+    ke = ke + 0.5 * m(i) * transpose(comdot) * comdot ...
+        + 0.5 * Izz(i) * phidot^2;
 
     % update p to be origin of frame {i+1}
-    p = ???
-%       * p_{i+1} = an expression in R^2 in terms of p_i, L(i), and phi_i
+    p = p + L(i) * [cos(phi); sin(phi)];
 end
 
 %% Save Equations of Motion to File
@@ -107,8 +90,7 @@ end
 % compute Euler-Lagrange equations
 ke = simplify(ke);
 pe = simplify(pe);
-eomTraditional = an instance of class EulerLagrange
-%   * define in terms of ke and pe
+eomTraditional = EulerLagrange(ke, pe, q, qdot);
 
 % save the rrr package in this script's directory
 dir = fileparts(which('rrr_dynamics_traditional.m'));

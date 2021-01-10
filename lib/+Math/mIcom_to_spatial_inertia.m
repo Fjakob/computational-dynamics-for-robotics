@@ -44,13 +44,13 @@ if nargin < 3
     T_ab = eye(4);
 end
 
-I_a = spatial inertia in frame {a} coordinates
-%   + add other local variables as needed to complete the definition
-%   + useful variables to add could include T_ba, a zero matrix, 
-%     Adjoint of T_ba, spatial inertia I_b
+T_ba = Math.T_inverse(T_ab);
+AdT = Math.AdT(T_ba);
+Z = zeros(3, 3);
+I_b = [Icom, Z; Z, m * eye(3)];
+I_a = transpose(AdT) * I_b * AdT;
 
 if nargout > 1
-    R_bp = orientation of {p} in {b} coordinates in SO(3)
-%       * use Matlab's eig(...) function
+    R_bp = eig(Icom);
 end
 end

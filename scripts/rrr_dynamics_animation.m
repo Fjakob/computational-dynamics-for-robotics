@@ -3,7 +3,7 @@
 %   Note:
 %       This script assumes the existance of an object, struct, package,
 %       etc. named |rrr| that supports the use of calling a function
-%       |???| using dot notation in the animation loop.
+%       |ForwardDynamics| using dot notation in the animation loop.
 %
 %   See also +RRR RRR_DYNAMICS_SPATIAL and RRR_DYNAMICS_TRADITIONAL.
 
@@ -82,20 +82,14 @@ n = 3;
 q = zeros(n, 1);
 qdot = zeros(n, 1);
 tau = zeros(n, 1);
-params = model parameters in a specific order
-%   * use the EulerLagrange objects in rrr_dynamics_spatial or
-%     rrr_dynamics_traditional to obtain the order
-%   * your answer must be in terms of r, Izz, g, L, and m
+params = [Izz  Izz  Izz  L  L  g m m m r r r];
 
 snapshots = Utils.takeSnapshot(env); % save the current figure
 for i = 1:N
     % solve for the accelerations and integrate up
-    qddot = rrr.???
-%       * check the +rrr folder for candidate functions
-%       * don't have an +rrr folder?  complete and run either 
-%         rrr_dynamics_traditional.m or rrr_dynamics_spatial.m    
-    qdot = \dot{q}_i + \ddot{q}_i * \Delta t;
-    q = q_i + \dot{q}_i * \Delta t;    
+    qddot = rrr.ForwardDynamics(q, qdot, tau, params);
+    qdot = qdot + qddot * delta_t;
+    q = q + qdot * delta_t;
     
     % update frame position
     T1 = Math.expm6(S1_mat * q(1));

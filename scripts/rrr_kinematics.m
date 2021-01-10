@@ -38,22 +38,28 @@ L2 = 2/3;
 L3 = 2/3;
 
 % define screws axes of revolute joints in {0} (i.e., {s}) coordinates
-S1 = frame {1} joint (screw) axis in {0} coordinates
-S2 = frame {2} joint axis in {0} coordinates
-S3 = frame {3} joint axis in {0} coordinates
+S1 = [0; 0; 1; 0; 0; 0];
+S2 = [0; 0; 1; 0; -L1; 0];
+S3 = [0; 0; 1; 0; -L1 - L2; 0];
 
 % and their matrix representations
-S1_mat = se(3) representation of S1
-%   * you should use the corresponding function in the Math package
-S2_mat = se(3) representation of S2
-S3_mat = se(3) representation of S3
+S1_mat = Math.r6_to_se3(S1);
+S2_mat = Math.r6_to_se3(S2);
+S3_mat = Math.r6_to_se3(S3);
 
-% write the position of the origin of frame {4} relative to {0}
-p4 = position of {4}'s origin relative to {0}
+% write the position of the origin of each frame relative to {0}
+p1 = [0; 0; 0];
+p2 = [L1; 0; 0];
+p3 = [L1 + L2; 0; 0];
+p4 = [L1 + L2 + L3; 0; 0];
+
+% define the joint frames {1}, {2}, and {3} relative to {0} at q = 0
+M1 = Math.Rp_to_T([], p1);
+M2 = Math.Rp_to_T([], p2);
+M3 = Math.Rp_to_T([], p3);
 
 % define the end-effector frame M relative to {0} at q = 0
-M = SE(3) representation of {4} relative to {0}
-%   * you should use Math.Rp_to_T with p4 and [] as arguments
+M = Math.Rp_to_T([], p4);
 
 %% Create the Environment
 env = Environment();
@@ -61,10 +67,24 @@ env = Environment();
 % create an alias to {s}
 frame0 = env.SpaceFrame;
 
+frame1 = Frame(frame0, M1);
+frame1.Name = '1';
+link1 = CoordVector(frame1, [L1; 0; 0]); % link 1 in {1} coordinates
+link1.Color = 'red';
 
-% represent the end-effector as a frame relative to frame {0}
-eeframe = Frame(frame0, transform representing {4} relative to {0});
-%   + also add a line to name the frame, 'M' would be a good choice
+frame2 = Frame(frame0, M2);
+frame2.Name = '2';
+link2 = CoordVector(frame2, [L2; 0; 0]); % link 2 in {2} coordinates
+link2.Color = 'green';
+
+frame3 = Frame(frame0, M3);
+frame3.Name = '3';
+link3 = CoordVector(frame3, [L3; 0; 0]); % link 3 in {3} coordinates
+link3.Color = 'blue';
+
+% represent the end-effector as a frame relative to frame {0} at q = 0
+eeframe = Frame(frame0, M);
+eeframe.Name = 'M';
 
 %% Run Animation
 % Let's animate the RRR robot.  The value for |n| is large.  If the
@@ -79,8 +99,13 @@ q = [0; 0; 0];
 qdot = [0; 0; 0];
 
 % expand axes to capture entire animation
-env.Axes = 3 * [-1 1 -1 1 -1 1];
-env.show();
+% reduce clutter in output
+env.Axes = 2 * [-1 1 -1 1 -1 1];
+env.hide();
+frame1.hideAxes();
+frame2.hideAxes();
+frame3.hideAxes();
+eeframe.hideAxes();
 
 snapshots = Utils.takeSnapshot(env); % save the current figure
 for t = 0:n
@@ -97,14 +122,19 @@ for t = 0:n
     q = q + qdot * delta_t;
         
     % move frame using Product of Exponentials formula
-    T1 = exponential mapping of exponential coordinates S1 * q(1) to SE(3)
-    T2 = exponential mapping of exponential coordinates S2 * q(2) to SE(3)
-    T3 = exponential mapping of exponential coordinates S3 * q(3) to SE(3)
+    T1 = Math.expm6(S1_mat * q(1));
+    T2 = Math.expm6(S2_mat * q(2));
+    T3 = Math.expm6(S3_mat * q(3));
+    
+    T01 = T1;
+    T02 = T01 * T2;
+    T03 = T02 * T3;
     
     % update frame position
-    eeframe.moveGraphic(T04);
-    %   * T04 = Product of Exponential formula in space form for
-    %     end-effector frame = some function of T1, T2, T3, and M
+    frame1.moveGraphic(T01 * M1);
+    frame2.moveGraphic(T02 * M2);
+    frame3.moveGraphic(T03 * M3);
+    eeframe.moveGraphic(T03 * M);
     snapshots = Utils.takeSnapshot(env, snapshots);
     drawnow();
 end
@@ -144,3 +174,6 @@ Utils.saveSnapshots(snapshots, 'rrr_kinematics.mp4');
 %   frame2.hideAxes();
 %   frame3.hideAxes();
 %   eeframe.hideAxes();
+%
+% If you any help, euler_lagrange_simulation.m implements a version of this
+% code.

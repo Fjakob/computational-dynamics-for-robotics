@@ -1,12 +1,12 @@
 function AdT = AdT(T)
-% ADT Computes the adjoint of an element in se(3).
+% ADT Computes the adjoint of an element in SE(3).
 %   X = ADT(T) returns the 6x6 adjoint representation of the
 %   transformation matrix T in SE(3), where T = [R p; 0 1] and 
 %   X = [R 0; [p]*R R] in R^{6x6}.
 %
 %   Example:
 %       T = [1 0 0 1; 0 0 1 2; 0 -1 0 3; 0 0 0 1];
-%       X = Math.adjoint(T)
+%       X = Math.AdT(T)
 %
 %       >> [1  0  0  0  0  0; 
 %           0  0  1  0  0  0; 
@@ -15,8 +15,6 @@ function AdT = AdT(T)
 %           3  1  0  0  0  1;
 %          -2  0  1  0 -1  0
 %          ]
-%
-%   See also RP_TO_T
 
 % AUTHORS:
 %   <------------ Add your info! ------------>

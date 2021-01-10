@@ -24,8 +24,7 @@ classdef EulerLagrange < handle
     %   <------------ Add your info! ------------>    
     %   Nelson Rosa nr@inm.uni-stuttgart.de 12/15/2020, Matlab R2020a, v1    
     
-    properties (the attribute setting that makes these variables read only)
-%       * we want users of our library to get a value, but not set it.
+    properties (SetAccess = private)
         KE % The total kinetic energy of an n-dof system
         PE % The total potential energy of an n-dof system
         GeneralizedCoordinates % The user-defined generalized coordinates
@@ -51,12 +50,10 @@ classdef EulerLagrange < handle
             %   of symbolic generalized coordinates and velocities of
             %   length |n| each.
             
-            assign the inputs ke, pe, q, and qdot to their corresponding 
-            properties
-%               * given obj, you set properties as obj.Property = value
-%               * while you can give properties initial values in the
-%                 properties block, in general, initializiation happens in
-%                 the constructor.
+            obj.KE = ke;
+            obj.PE = pe;
+            obj.GeneralizedCoordinates = q;
+            obj.GeneralizedVelocities = qdot;
             % we'll set the remaining properties inside their respective
             % methods; note how we don't have to explicitly initialize all
             % properties in the constructor; we can have the rest of the
@@ -99,6 +96,15 @@ classdef EulerLagrange < handle
             % subs Substitute model state and parameter values
             %   subs(OBJ, OLD, NEW) Replaces every instance of OLD in the
             %   Euler-Lagrange equations with instances of NEW.
+            %
+            %   Example:
+            %       % simple cart-pendulum robot
+            %       syms x theta xdot thetadot g m M L real
+            %       ... code that computes ke and pe of robot ...
+            %       eulerLagrange = EulerLagrange(ke, pe, q, qdot);
+            %       old = [L m M g];
+            %       params = [1 1 2 9.81];
+            %       eulerLagrange.subs(old, params);
             %
             %   See also sym/subs.
             
@@ -168,23 +174,9 @@ classdef EulerLagrange < handle
             %
             %   $$g(q) = \frac{\partial PE(q)}{\partial q}$$
             
-            % if you access a property several times (or want to rename the
-            % property to something more convenient), you should place the
-            % value in a local variable.  In this case, the property name
-            % is too long, so we give it a shorter alias in this function.
             q = obj.GeneralizedCoordinates;
 %               + you should add more code as needed.
-            obj.GravitationalForces = some function of obj.PE and q;
-%               * to compute obj.GravitationalForces, you can either
-%                   1) create a local variable g (and any other variables 
-%                      you might need) and write a for loop to compute 
-%                      $g(i) = \frac{\partial PE(q)}{\partial q_i}$ and 
-%                      assign g to obj.GravitationalForces, or
-%                   2) use the Matlab |jacobian| function with obj.PE and
-%                      q.  Beware!  |jacobian| returns a row vector, we
-%                      want a column vector.  Beware!!!!  We are working
-%                      with symbolic variables, so you should use the
-%                      syms-friendly transpose() function (or .' for short)
+            obj.GravitationalForces = transpose(jacobian(obj.PE, q));
         end        
         function computeMassMatrix(obj)
             % computeMassMatrix Computes the mass matrix
@@ -203,17 +195,18 @@ classdef EulerLagrange < handle
             % easier to maintain, and more readable to others (including
             % your future self).
             ke = obj.KE;
-            obj.MassMatrix = ???
-%               + to compute obj.MassMatrix, either
-%                   1) write a double for loop to compute M(i, j) and 
-%                      assign M to obj.MassMatrix, or
-%                   2) use the Matlab |jacobian| function (you won't need
-%                      to code as much with this approach)            
-%               + what are some other local variables that would be useful
-%                 to define?  Consider defining local variables for n (the
-%                 degrees of freedom of the robot), qdot (a vector of 
-%                 length n), and M.  We can assign our local copy of M to 
-%                 obj.MassMatrix as our last step: obj.MassMatrix = M.
+            qdot = obj.GeneralizedVelocities;
+            n = length(qdot);
+            M = sym(zeros(n));
+            for i = 1:n
+                dkedqdoti = diff(ke, qdot(i));
+                for j = 1:n
+                    M(i, j) = diff(dkedqdoti, qdot(j));
+                end
+            end
+            % or skip the nested loops and use |jacobian|:
+            %   obj.MassMatrix = jacobian(jacobian(ke, qdot), qdot)
+            obj.MassMatrix = M;
         end
         function Gijk = christoffelSymbols(obj, i, j, k)
             % christoffelSymbols Computes the entries of a tensor
@@ -233,10 +226,10 @@ classdef EulerLagrange < handle
             
             q = obj.GeneralizedCoordinates;
             M = obj.MassMatrix;
-            dMijdqk = M(i, j) differentiated with respect to q(k)
-            dMikdqj = ... and so on
-            dMjkdqi = ... and so forth
-            Gijk = \Gamma_{ijk}
+            dMijdqk = diff(M(i, j), q(k));
+            dMikdqj = diff(M(i, k), q(j));
+            dMjkdqi = diff(M(j, k), q(i));
+            Gijk = (dMijdqk + dMikdqj - dMjkdqi) / 2;
         end        
         function computeCoriolisCentripetalForces(obj)
             % computeCoriolisCentripetalForces Computes the force vector of
@@ -260,8 +253,15 @@ classdef EulerLagrange < handle
             qdot = obj.GeneralizedVelocities;
             n = length(qdot);
             c = sym(zeros(n,1));
-%               + write a triple loop to compute 
-%                 c(i) = \Gamma(i, j, k) * qdot(j) * qdot(k);
+            for i = 1:n
+                for j = 1:n
+                    for k = 1:n
+                        qdotjk = qdot(j) * qdot(k);
+                        ci = obj.christoffelSymbols(i, j, k) * qdotjk;
+                        c(i) = c(i) + ci;
+                    end
+                end
+            end
             obj.CoriolisCentripetalForces = c;
         end
         function dir = writeFowardDynamicsToFile(obj, name)
@@ -290,8 +290,10 @@ classdef EulerLagrange < handle
             [dir, packname] = parsepath(name);
             if isempty(obj.Parameters)
                 params = '';
+                errsup =  ' %#ok<INUSD>';
             else
                 params = ', params';
+                errsup =  '';
             end
             filename = fullfile(dir, 'ForwardDynamics.m');
             
@@ -299,7 +301,7 @@ classdef EulerLagrange < handle
             if f ~= -1
                 func = {
                     ['function qdd = ' ...
-                    'ForwardDynamics(q, qdot, tau, params) %#ok<INUSD>'];
+                    'ForwardDynamics(q, qdot, tau, params)', errsup];
                     '% FORWARDDYNAMICS Computes acceleration';
                     ['% ', ...
                     sprintf(...

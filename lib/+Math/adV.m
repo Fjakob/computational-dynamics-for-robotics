@@ -16,6 +16,8 @@ function adV = adV(V)
 %           -v2  v1   0  -w2  w1  0
 %          ]
 
-adV = ???;
-%   + add other local variables as needed to complete the definition
+wmat = Math.r3_to_so3(V(1:3));
+vmat = Math.r3_to_so3(V(4:6));
+Z = zeros(3, 3);
+adV = [wmat Z; vmat wmat];
 end
