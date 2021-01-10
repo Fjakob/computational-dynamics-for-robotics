@@ -10,7 +10,7 @@ classdef LibEulerLagrangeTest < matlab.unittest.TestCase
     % AUTHORS:
     %   <------------ Add your info! ------------>
     %   Nelson Rosa nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
-    
+        
     methods (Test)
         function testEulerLagrange(testCase)
             % testEulerLagrange Tests the equations of motion of a
@@ -19,49 +19,36 @@ classdef LibEulerLagrangeTest < matlab.unittest.TestCase
             syms x theta xdot thetadot g m M L real
             % positions
             q = [x; theta];
-            pBlock = planar location of block in terms of x and theta
-%               * pBlock \in R^2            
-            pBob = planar location of block in terms of x and theta
-%               * pBob \in R^2            
+            pBlock = [x; 0];
+            pBob = [x + L * sin(theta); -L * cos(theta)];
             % velocities
             qdot = [xdot; thetadot];
-            vBlock = velocity of block (vBlock \in R^2)
-%               * hint use jacobian(....) and qdot to compute values
-            vBob = velocity of bob (vBob \in R^2)
-%               * hint use jacobian(....) and qdot to compute values
+            vBlock = jacobian(pBlock, q) * qdot;
+            vBob = jacobian(pBob, q) * qdot;
             % energy
-            peBlock = ???
-%               * write the potential energy of the block with respect to 
-%                 the symbolic variables x, theta, xdot, thetadot, g, m, M,
-%                 and L.  Do the same for the other variables below.
-            keBlock = ???
-%               * write the kinetic energy of the block
-            peBob = ???
-%               * write the potential energy of the pendulum bob
-            keBob = ???
-%               * write the kinetic energy of the pendulum bob            
+            peBlock = g * M * pBlock(2);
+            keBlock = 0.5 * M * transpose(vBlock)*vBlock;
+            peBob = g * m * pBob(2);
+            keBob = 0.5 * m * transpose(vBob)*vBob;
             pe = peBlock + peBob;
-            ke = keBlock + keBob;            
+            ke = keBlock + keBob;
             % get computed values
             el = EulerLagrange(ke, pe, q, qdot);
             qact = el.GeneralizedCoordinates;
             qdotact = el.GeneralizedVelocities;
-            Mact = Utils.simplify(el.MassMatrix);
-            cact = Utils.simplify(el.CoriolisCentripetalForces);
-            gact = Utils.simplify(el.GravitationalForces);
+            Mact = simplify(el.MassMatrix);
+            cact = simplify(el.CoriolisCentripetalForces);
+            gact = simplify(el.GravitationalForces);
             % compare against expected values
-            Mexp = ???;
-%               * you've computed this value!  Input your solution from the 
-%                 corresponding exercise problem
-            cexp = ???;
-%               * input your solution from exercise problem
-            gexp = ???;
-%               * input your solution from exercise problem            
-            testCase.verifyEqual(that qact is equal to q);
-%               + add code to verify qdotact == qdot            
-%               + add code to verify Mact == Mexp
-%               + add code to verify cact == cexp            
-%               + add code to verify gact == gexp
+            Mexp = [m + M, m * L * cos(theta)
+                m * L * cos(theta), m * L^2];
+            cexp = [-m * L * sin(theta) * thetadot^2; 0];
+            gexp = [0; m * g * L * sin(theta)];
+            testCase.verifyEqual(qact, q);
+            testCase.verifyEqual(qdotact, qdot);
+            testCase.verifyEqual(Mact, Mexp);
+            testCase.verifyEqual(cact, cexp);
+            testCase.verifyEqual(gact, gexp);
         end
     end
 end
