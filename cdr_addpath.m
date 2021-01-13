@@ -3,9 +3,10 @@
 
 % AUTHORS:
 %   Nelson Rosa nelson.rosa@inm.uni-stuttgart.de
-%   12/18/2020, Matlab R2020a, v2
+%   01/11/2021, Matlab R2020a, v3
 
 addpath('./docs/media');
 addpath(genpath('./lib'));
 addpath(genpath('./scripts'));
 addpath('./unit_tests');
+addpath('./ext_lib');

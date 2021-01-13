@@ -49,19 +49,17 @@ classdef Environment < handle
     methods
         %% Constructor
         function obj = Environment()
-            % allow LaTeX markup in strings
-            % from https://www.mathworks.com/matlabcentral/answers/254964
             obj.Figure = figure('Visible', 'off', ...
-                'Color', [0.95 0.95 0.95], ...
-                'DefaultTextInterpreter', 'latex');
+                'Color', [0.95 0.95 0.95]);
                                   
             obj.light_handle = camlight('right');
             resetOutput(obj);
             
             obj.SpaceFrame = Frame(obj.Axes, eye(4));
-            obj.SpaceFrame.set('Tag', '{s}');
+            obj.SpaceFrame.RootGraphic.Tag = '{s}';
             obj.SpaceFrame.Name = 's';
             obj.SpaceFrame.hide();
+            obj.resetOutput;
             obj.Figure.Visible = 'on';
         end
         %% Property Setter/Getter Methods

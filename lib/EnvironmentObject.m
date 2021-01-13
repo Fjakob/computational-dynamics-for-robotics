@@ -1,16 +1,12 @@
 classdef EnvironmentObject < handle
-
-% AUTHORS:
-%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+    
+    % AUTHORS:
+    %   Nelson Rosa nr@inm.uni-stuttgart.de 01/10/2021, Matlab R2020a, v1
     
     properties
         RootGraphic
     end
-    properties (Dependent)
-        Color % Color of all graphics under RootGraphic
-        Parent % Parent as an EnvironmentObject
-    end
-    properties (Dependent, SetAccess = private)
+    properties (Access = protected)
         % MyGraphics - Graphical representation of EnvironmentObject
         %   A subclass can create an optional special graphics handle with
         %   the 'Tag' property set to 'MyGraphics' (as a character array).
@@ -19,56 +15,126 @@ classdef EnvironmentObject < handle
         %   tag exists, MyGraphics returns an empty array.
         MyGraphics
     end
+    properties (Dependent)
+        Name % sets text of all graphics under MyGraphic
+        Label % sets text of all graphics under MyGraphic 
+        Color % sets color of all graphics under MyGraphic
+        LabelColor % sets color of all graphics under MyGraphic
+        ShapeColor % sets color of all graphics under MyGraphic
+    end
+    properties (Dependent, SetAccess = protected)
+        T % local transform from RootGraphic's parent to RootGraphic
+    end
+    properties (Dependent, SetAccess = private)
+        T_sb % transform from {s} to RootGraphic
+    end
     methods
         %% Constructor
-        function obj = EnvironmentObject(parent)
+        function obj = EnvironmentObject(parent, myGraphics)
             % b/c matlab.graphics.primitive.Transform is a sealed class, we
             % can't be a subclass; instead we'll act as a wrapper class and
             % add ourselves in UserData to hook back into ourselves.
-            parent = parentRootGraphic(parent);
-            obj.RootGraphic = hgtransform('Parent', parent);
-            obj.RootGraphic.UserData = struct('envObject', obj);
+            parent = obj.getGraphicsHandle(parent);
+            obj.RootGraphic = hgtransform('Parent', parent, ...
+                'Tag', 'RootGraphic');
+            if nargin < 2
+                obj.MyGraphics = [];
+            else
+                obj.MyGraphics = myGraphics;
+                obj.MyGraphics.Parent = obj.RootGraphic;
+                obj.MyGraphics.Tag = 'MyGraphics';
+            end
         end
         %% Property Setter/Getter Methods
         %   The scope (private, protected, public) of these methods is
-        %   defined in the related properties block.        
+        %   defined in the related properties block.
         function set.Color(obj, color)
-            h = findobj(obj.RootGraphic, '-property', 'Color', ...
-                '-or', '-property', 'FaceColor');
-            set(findobj(h, '-property', 'Color'), 'Color', color);
-            set(findobj(h, '-property', 'FaceColor'), 'FaceColor', color);
-        end        
-        function set.Parent(obj, parent)
-            obj.set('Parent', parentRootGraphic(parent));
+            obj.setShapeColor(color);
+            obj.setTextColor(color);
         end
-        function parent = get.Parent(obj)
-            parent = obj.get('Parent').UserData.envObject;
+        function set.Name(obj, text)
+            obj.setTextString(text);
         end
-        function h = get.MyGraphics(obj)
-            h = findobj(obj.RootGraphic.Children, 'flat', ...
-                'Tag', 'MyGraphics');
-        end        
-        %% Public Methods
-        function obj = set(obj, varargin)
-            % set Sets properties of hgtransform graphics handle
-            %   The set function acts as a wrapper for the hgtransform
-            %   properties, more specifically of the class
-            %   matlab.graphics.primitive.Transform.
-
-            set(obj.RootGraphic, varargin{:});
-        end        
-        function h = get(obj, varargin)
-            % get Gets properties of hgtransform graphics handle
-            %   The get function acts as a wrapper for the hgtransform
-            %   properties, more specifically of the class
-            %   matlab.graphics.primitive.Transform.
+        function set.T(obj, T)
+            % set.T Moves all graphics in RootGraphic
+            %   This is a shorthand notation for calling moveGraphic for
+            %   library developers.  Users of the library have to call
+            %   moveGraphic in order to update the graphics.
             
-            h = get(obj.RootGraphic, varargin{:});
+            obj.moveGraphic(T);
         end
-        function eo = getMyGraphicsChild(obj, i)
-            % get.Label Gets the arrow's label as an EnvironmentObject
-            hgt = obj.MyGraphics.Children(i);
-            eo = hgt.UserData.envObject;
+        function T = get.T(obj)
+            % get.T Returns RootGraphic relative to parent object
+            T = obj.RootGraphic.Matrix;
+        end
+        function T = get.T_sb(obj)
+            % T_sb Computes the body to space transform in SE(3)
+            %   T = T_SB(OBJ) Returns the {S} to OBJ.RootGraphics
+            %   transform.  The recursion stops once we hit an |axes|
+            %   object (the root of our tree; see ENVIRONMENT.).
+            
+            node = base case for node
+%               * we want to start from this object's root graphic handle
+            T = base case for T
+            while ~isempty(node) && ~isa(node, 'axes')
+%               + we only update T when node.Type is an hgtransform; these
+%                 are the only graphics types we assume have a
+%                 transformation matrix in their Matrix property.
+%               * see the documentation for hgtransform, especially
+%                 |Type| in the hgtransform properties documentation
+%               * create an hgtransform in the command window to get an
+%                 idea of the value and type for node.Type
+%                   - h = hgtransform();
+%                   - h.Type
+%               * what's the type for a surface handle? Try h = surface()
+%               * when your ready to write the test, |strcmp| might be
+%                 helpful
+                node = ????;            
+%                   * how do we move up the tree to get to the root?
+%                   * stuck?  Try inspecting hgtransform properties
+%                     documentation.
+            end            
+        end
+        %% Public Methods
+        function obj = setShapeColor(obj, color)
+            root = {'-property', 'FaceColor'};
+            obj.setMyGraphics('FaceColor', color, root);
+        end
+        
+        function obj = setTextColor(obj, color)
+            root = {'-property', 'Color'};
+            obj.setMyGraphics('Color', color, root);
+        end
+        
+        function obj = setTextString(obj, text)
+            root = {'-property', 'String'};
+            obj.setMyGraphics('String', text, root);
+        end
+        
+        function h = getMyGraphics(obj, root)
+            % in a nutshell, finds a set of handles based on a column cell
+            % array worth of findobj commands; a row cell is converted into
+            % a column cell before execution.
+            if nargin < 2
+                h = obj.MyGraphics;
+            elseif iscell(root)
+                if isrow(root)
+                    root = {root};
+                end
+                h = obj.MyGraphics.Children;
+                for i = 1:length(root)
+                    h = findobj(h, root{i}{:});
+                end
+            else
+                h = root;
+            end
+        end
+        function obj = setMyGraphics(obj, property, value, root)
+            h = obj.getMyGraphics(root);
+            h = findobj(h, '-property', property);
+            property = cellify(property);
+            value = cellify(value);          
+            set(h, property, value);
         end        
         function obj = show(obj)
             g = obj.MyGraphics;
@@ -81,65 +147,57 @@ classdef EnvironmentObject < handle
             if ~isempty(g)
                 g.Visible = 'off';
             end
-        end             
-        function obj = add(obj, X, Y, Z, T)
-            % add(obj, str, [T1...Tk], [n1...nk])
-            % add(obj, str, [T1...Tk], [n1...nk], T)
-            % add(obj, H)
-            % add(obj, H, [], [], T)
-            % add(obj, EO)
-            % add(obj, EO, [], [], T)
-            % add(obj, X, Y, Z)
-            % add(obj, X, Y, Z, T)
-            
-            if nargin < 3
-                Y = [];
-            end
-            if nargin < 4
-                Z = [];
-            end
-            if nargin < 5
-                T = eye(4);
-            end
-            
-            if ischar(X)
-                % Utils.draw(obj, X, Y, Z).moveGraphic(T);
-                obj = Utils.draw(obj, X, Y, Z);
-                obj.moveGraphic(T);
-            elseif isa(X, 'EnvironmentObject')
-                % base case 1: stop after EO
-                X.set('Parent', obj.RootGraphic).moveGraphic(T);
-            elseif isnumeric(X)
-                obj.add( ...
-                    surface(X, Y, Z, 'Tag', get(obj, 'Tag')), [], [], T);
-            else
-                % base case 2: stop after graphics handle
-                tag = get(X, 'Tag');
-                set(X, 'Parent', EnvironmentObject(obj) ...
-                    .moveGraphic(T).set('Tag', tag).RootGraphic);
-            end
         end
         function obj = moveGraphic(obj, T)
             % moveGraphic Applies transformation relative to parent
+            %   OBJ = moveGraphic(OBJ, T) Moves the underlying coordinate
+            %   vector by displacing it with the transform T_B in SE(3)
+            %   defined relative to underlying parent frame B.
             
-            obj.set('Matrix', T);
+            obj.RootGraphic.Matrix = T;
         end
-        function T_sb = getT_sb(obj)
-            % getT_sb Returns the body to space transform in SE(3)
+        function obj = add(obj, child, T, n, options)
+            % add(obj, path/to/stl/file, T, color, options)
+            % add(obj, fmt, [T1...Tk], [n1...nk], options)
+            % add(obj, H)
             
-            T_pb = obj.get('Matrix');
-            T_sb = T_pb;
-            % this is generally incorrect, we'll fix this method in a
-            % future exercise problem; it only works in cases where the
-            % parent frame is coincident with {s}.
-        end           
+            if nargin < 3
+                T = [];
+            end
+            if nargin < 4
+                n = [];
+            end
+            if nargin < 5
+                options = {};
+            end
+            
+            if isgraphics(child)
+                child.set('Parent', obj.RootGraphic);
+            elseif isfile(child)
+                Draw.stl(obj.RootGraphic, child, T, n, options);
+            else
+                Draw.shapef(obj.RootGraphic, child, T, n, options);
+            end
+        end
+    end
+    methods (Static)
+        function handle = getGraphicsHandle(obj)
+            if isa(obj, 'EnvironmentObject')
+                handle = obj.RootGraphic;
+            elseif isa(obj, 'Environment')
+                handle = obj.SpaceFrame.RootGraphic;
+            elseif isempty(obj) || isgraphics(obj)
+                handle = obj;
+            else
+                error(['obj %s not an Environment, ', ...
+                    'EnvironmentObject, or graphics handle'], obj);
+            end
+        end
     end
 end
 
-function parent = parentRootGraphic(parent)
-if isa(parent, 'EnvironmentObject')
-    parent = parent.RootGraphic;
-elseif isa(parent, 'Environment')
-    parent = parent.SpaceFrame.RootGraphic;
+function c = cellify(c)
+if ~iscell(c)
+    c = {c};
 end
 end

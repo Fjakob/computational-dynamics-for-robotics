@@ -2,74 +2,60 @@ classdef Frame < EnvironmentObject
     % Frame Documentation pending
     
     % AUTHORS:
-    %   Nelson Rosa nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v22
+    %   Nelson Rosa nr@inm.uni-stuttgart.de 01/10/2021, Matlab R2020a, v23
     %   C. David Remy remy@inm.uni-stuttgart.de 10/12/2018, Matlab R2018a, v21
     
-    properties
-        T = eye(4) % transformation matrix in SE(3)
-    end
-    properties (Dependent)
-        Name
-    end
-    properties (Dependent, Access = private)
-        Label
-        X
-        Y
-        Z
-    end
     methods
         %% Constructor
         function obj = Frame(parent, T)
             % init graphics
-            obj@EnvironmentObject(parent);
+            myGraphics = hgtransform('Parent', []);
+            obj@EnvironmentObject(parent, myGraphics);
             obj.hide();
-            Utils.drawFrame(obj);
-            % setup properties
-            obj.T = T;
+            obj.RootGraphic.Tag = 'Frame';
+            
+            % add elements so myGraphic.Children = [Origin, X, Y, Z]
+            color = {'red', 'green', 'blue'};
+            label = {'$\hat{x}$', '$\hat{y}$', '$\hat{z}$'};
+            I = eye(3);
+            for i = 3:-1:1
+                % create temporary CoordVectors to help set up axes
+                c = CoordVector([], I(:, i));
+                c.MyGraphics.Parent = myGraphics;
+                c.MyGraphics.Tag = [upper(label{i}(7)), '-Axis'];
+                c.Name = label{i};
+                c.Color = color{i};
+            end
+            c = Draw.point(myGraphics);
+            c.Tag = 'Origin';
+            
+            % update graphics
+            obj.moveGraphic(T);
             % show graphics
             obj.show();
         end
-        %% Property Setter/Getter Methods
-        %   The scope (private, protected, public) of these methods is
-        %   defined in the related properties block.        
-        function set.T(obj, T)
-            obj.T = T;
-            obj.moveGraphic(T);
+        %% Public Methods        
+        function obj = setTextString(obj, name)
+            n = name;
+            if length(n) > 1 && n(1) == '$' && n(end) == '$'
+                n = n(2:end-1);
+            end
+            x = ['$\hat{x}_{', n, '}$'];
+            y = ['$\hat{y}_{', n, '}$'];
+            z = ['$\hat{z}_{', n, '}$'];
+            o = ['\{', name, '\}'];
+            setTextString@EnvironmentObject(obj, {o; x; y; z});
         end
-        function set.Name(obj, name)
-            obj.X.Name = ['$\hat{x}_{', name, '}$'];
-            obj.Y.Name = ['$\hat{y}_{', name, '}$'];
-            obj.Z.Name = ['$\hat{z}_{', name, '}$'];
-            txt = obj.Label.RootGraphic.Children;
-            set(txt, 'String',  ['\{', name, '\}']);
-        end
-        function name = get.Name(obj)
-            txt = obj.Label.RootGraphic.Children;
-            name = get(txt, 'String');
-            name = name(3:end-2);
-        end
-        function txt = get.Label(obj)
-            txt = obj.getMyGraphicsChild(1);
-        end
-        function x = get.X(obj)
-            x = obj.getMyGraphicsChild(3);
-        end
-        function y = get.Y(obj)
-            y = obj.getMyGraphicsChild(4);
-        end
-        function z = get.Z(obj)
-            z = obj.getMyGraphicsChild(5);
-        end        
         %% Public Methods
         function obj = showAxes(obj)
-            obj.X.show();
-            obj.Y.show();
-            obj.Z.show();
+            for i = 2:4
+                obj.MyGraphics.Children(i).Visible = 'on';
+            end
         end
         function obj = hideAxes(obj)
-            obj.X.hide();
-            obj.Y.hide();
-            obj.Z.hide();
-        end
+            for i = 2:4
+                obj.MyGraphics.Children(i).Visible = 'off';
+            end
+        end    
     end
 end
