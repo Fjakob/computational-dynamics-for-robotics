@@ -73,10 +73,11 @@ classdef EnvironmentObject < handle
             %   transform.  The recursion stops once we hit an |axes|
             %   object (the root of our tree; see ENVIRONMENT.).
             
-            node = base case for node
+            error('get.T_sb has not been re-implemented yet.');
+%            node = base case for node   <--------***** FIX
 %               * we want to start from this object's root graphic handle
-            T = base case for T
-            while ~isempty(node) && ~isa(node, 'axes')
+%            T = base case for T   <--------***** FIX
+%            while ~isempty(node) && ~isa(node, 'axes')   <------ UNCOMMENT
 %               + we only update T when node.Type is an hgtransform; these
 %                 are the only graphics types we assume have a
 %                 transformation matrix in their Matrix property.
@@ -89,11 +90,11 @@ classdef EnvironmentObject < handle
 %               * what's the type for a surface handle? Try h = surface()
 %               * when your ready to write the test, |strcmp| might be
 %                 helpful
-                node = ????;            
+%                node = ????;   <--------***** FIX
 %                   * how do we move up the tree to get to the root?
 %                   * stuck?  Try inspecting hgtransform properties
 %                     documentation.
-            end            
+%            end                                          <------ UNCOMMENT
         end
         %% Public Methods
         function obj = setShapeColor(obj, color)

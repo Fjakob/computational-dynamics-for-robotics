@@ -86,7 +86,7 @@ classdef CoordVector < EnvironmentObject
             %       identity transform if not provided.
             %
             %   See also CoordVector and getCoords
-            
+
             if nargin < 4
                 T_b = eye(4);
             end
@@ -110,6 +110,7 @@ classdef CoordVector < EnvironmentObject
             %   See also CoordVector setCoords and getT_sb
             
             p_b = obj.OP;
+            warning('get.T_sb has not been re-implemented yet.');
             T_sb = obj.T_sb;
             
             T_sc = c.T_sb;
