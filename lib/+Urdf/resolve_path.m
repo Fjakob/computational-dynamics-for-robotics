@@ -23,4 +23,6 @@ else
     n = strlength(basePrefix) + 1;
     path = fullfile(dir(n:end), file);
 end
+
+path = strrep(path, '%20', ' ');
 end
