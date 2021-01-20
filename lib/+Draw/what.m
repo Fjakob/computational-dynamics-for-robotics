@@ -30,14 +30,18 @@ function g = what(root, fmt, varargin)
 %   <------------ Add your info! ------------>
 %   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 01/13/2021, Matlab R2020a, v1
 
-%   YOUR TODO LIST:
-%   * use |isfile| to determine if |fmt| is a valid file name and if it 
-%     isn't write a switch statement to call the other Draw functions; if 
-%     it is call the only function that accepts files regardless of the 
-%     file type.
-%   * use |varargin| to pass all other arguments to the functions you call.
-%     The form for the call would be
-%       f(root, fmt, varargin{:}), or
-%       f(root, varargin{:})
-%     depending on the function you are calling.
+if isfile(fmt)
+    g = Draw.stl(root, fmt, varargin{:});
+else
+    switch fmt
+        case 'point'
+            g = Draw.point(root, varargin{:});
+        case 'arrow'
+            g = Draw.arrow(root, varargin{:});
+        case 'frame'
+            g = Draw.frame(root, varargin{:});
+        otherwise
+            g = Draw.shapef(root, fmt, varargin{:});
+    end
+end
 end

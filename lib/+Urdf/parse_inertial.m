@@ -11,9 +11,20 @@ if isempty(inertialElement)
     I = zeros(6, 6);
     warning('no inertial element specified.');
 else
-    I = Math.mIcom_to_spatial_inertia(....)
-%       + all functions used to parse <inertial> are in the list of See 
-%         also functions; use these to define the args T, Icom, and mass of
-%         Math.mIcom_to_spatial_inertia.
+    val = @Urdf.get_value;
+    
+    origin = Urdf.get_element(inertialElement, 'origin');
+    T = Urdf.parse_origin(origin);
+        
+    mass = val(Urdf.get_child_attribute(inertialElement, 'mass', 'value'));
+    Ixx = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'ixx'));
+    Ixy = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'ixy'));
+    Ixz = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'ixz'));
+    Iyy = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'iyy'));
+    Iyz = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'iyz'));
+    Izz = val(Urdf.get_child_attribute(inertialElement, 'inertia', 'izz'));
+    Icom = [Ixx Ixy Ixz; Ixy Iyy Iyz; Ixz Iyz Izz];
+    
+    I = Math.mIcom_to_spatial_inertia(mass, Icom, T);
 end
 end

@@ -4,8 +4,6 @@ function robot = parse_robot(robotElement)
 %
 %   See also PARSE_LINK, PARSE_JOIN, and PARSE_MATERIAL
 
-robot = Urdf.get_attribute(???);
-%   * get the robots name and return it.
-
+robot = Urdf.get_attribute(robotElement, 'name');
 end
 

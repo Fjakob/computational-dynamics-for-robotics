@@ -141,9 +141,7 @@ if n < 0
 end
 
 [X, Y, Z] = cylinder(r, n);
-%   + define the cylinder so that it is consistent with the definition in
-%     the URDF.  First, find out how Matlab defines cylinders and then make
-%     the appropriate adjustment.  It's only one line of code.
+Z = Z - 0.5; % shift (height) middle to origin
 h = surface(X, Y, Z, 'Parent', []);
 end
 

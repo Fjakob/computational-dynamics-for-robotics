@@ -26,6 +26,8 @@ urdf = fullfile(dir, 'humanoid_urdf', 'sm_humanoid.urdf');
 
 [joints, links, materials, name] = Urdf.parse(urdf);
 
+% place in unit_test
+% save mystery_robot_parsed_urdf.mat joints links materials
 
 %% Create the Rigid Bodies
 % We create elements of the scene graph using matlab graphic containers.
@@ -41,9 +43,7 @@ for i = 1:length(names)
     % here we map URDF <visual> information to Matlab graphics
     rb = hgtransform('Parent', [], 'Tag', names{i});
     if ~isempty(g)
-        Draw.???(args are in terms of fields in g and the object rb)
-%       + call Draw.??? to add a graphic as a child of rb; look at each
-%         file and determine which one(s) to use.
+        Draw.what(rb, g.FormatString, g.T);
         h = findobj(rb, '-property', 'FaceColor');
         set(h, 'FaceColor', g.Material.Color(1:3));
     end
@@ -58,11 +58,12 @@ names = joints.keys;
 for i = 1:length(names)
     joint = joints(names{i});
     
-    p = parent contained in joint i
-    c = child contained in joint i
-    rb = the node named child in rbtree
-%       + update rb's parent
-%       + update rb's transform
+    p = joint.Parent;
+    c = joint.Child;
+    
+    rb = rbtree(c);    
+    rb.Parent = rbtree(p);
+    rb.Matrix = joint.T;
 end
 
 %% Find the Root
@@ -71,11 +72,13 @@ end
 
 names = rbtree.keys;
 root = [];
-%   + write a for loop to find the root node
-%   * to determine the root node, consider what special connectivity 
-%     property it has that no other node has in terms of its place in the 
-%     tree
-%   * we know there is only one root; consider a |break| when you find it
+for i = 1:length(names)
+    rb = rbtree(names{i});
+    if isempty(rb.Parent)
+        root = rb;
+        break;
+    end
+end
 
 %% Display the Robot
 % create an environment and show the results

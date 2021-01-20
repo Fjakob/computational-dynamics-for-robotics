@@ -21,22 +21,27 @@ function material = parse_material(materialElement)
 %
 %   See also GET_ATTRIBUTE, GET_CHILD_ATTRIBUTE, and GET_VALUE
 
-if material is empty
-    ???
+if isempty(materialElement)
+    name = '';
+    rgba = [];
+    f = '';
 else
-    parse <material>
+    name = Urdf.get_attribute(materialElement, 'name');
+    rgba = Urdf.get_child_attribute(materialElement, 'color', 'rgba', '');
+    if isempty(rgba)
+        rgba = [];
+    else
+        rgba = Urdf.get_value(rgba);
+    end
+    f = Urdf.get_child_attribute(materialElement, ...
+        'texture', 'filename', '');
 end
-%   * parse the material element here by extracting its attributes and its
-%     children's attributes.  Make sure to test that it isn't empty and to
-%     set appropriate values if it is.
-%
-%   * suggested functions can be found in the list of See also functions.
 
 % parsing is complete, now populate the struct or return the material name
 if isempty(rgba) && isempty(f)
     material = name;
 else
-    material = struct(...);
+    material = struct('Name', name, 'Color', rgba, 'Texture', f);
 end
 
 if ~isempty(f)

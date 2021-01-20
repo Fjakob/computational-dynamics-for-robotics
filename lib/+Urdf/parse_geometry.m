@@ -14,6 +14,8 @@ function geometry = parse_geometry(geometryElement)
 %
 %   See also GET_VALUE, GET_CHILD_ATTRIBUTE, and RESOLVE_PATH
 
+val = @Urdf.get_value;
+getChildAttr = @Urdf.get_child_attribute;
 
 % '*' is a wildcard character that matches any tag name
 % we know there is only one element, so we'll grab it and check the tag
@@ -21,14 +23,28 @@ function geometry = parse_geometry(geometryElement)
 element = Urdf.get_element(geometryElement, '*');
 tagName = char(element.getTagName());
 
-%   YOUR TODO LIST:
-%   + consider using a switch statement to handle all of the geometry
-%     types and set |fmt| and |scale| used below.  You can use the 
-%     |otherwise| statement to print a warning and set |fmt| and |scale| to
-%     empty values.
-%   * when processing <mesh> set the optional value of |scale| to 1
-%   * you should study the Draw package to understand how to set the
-%     character |fmt| based on the link's geometry.
+switch tagName
+    case 'box'
+        scale = val(getChildAttr(geometryElement, 'box', 'size'));
+        fmt = '#';
+    case 'cylinder'
+        r = val(getChildAttr(geometryElement, 'cylinder', 'radius'));
+        h = val(getChildAttr(geometryElement, 'cylinder', 'length'));
+        scale = [r; r; h];
+        fmt = '-';
+    case 'sphere'
+        scale = val(getChildAttr(geometryElement, 'sphere', 'radius'));
+        fmt = '.';
+    case 'mesh'
+        file = getChildAttr(geometryElement, 'mesh', 'filename');
+        fmt = Urdf.resolve_path(geometryElement, file);
+        scale = val(getChildAttr(geometryElement, 'mesh', 'scale', '1'));
+    otherwise
+        warning('unknown geometry in geometry element');
+        fmt = '';
+        scale = [];
+end
+
 
 % all done parsing! create a scaling transform and the struct
 T = Math.Rps_to_T([], [], scale);

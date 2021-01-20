@@ -21,12 +21,21 @@ function graphic = parse_visual(visualElement)
 %   See also GET_ATTRIBUTE GET_ELEMENT PARSE_ORIGIN PARSE_GEOMETRY and
 %   PARSE_MATERIAL
 
-%   + use the See also functions to tackle this problem; it contains all
-%     functions you will need for this problem.
-%   + the returned graphic struct is a modification of the struct returned
-%     by Urdf.parse_geometry.  In the version of the struct in this 
-%     file, modify the field containing the scaling matrix and add 
-%     two new fields as described in the above documentation.
-%   * Don't forget, this element is optional.  If <visual> is not present, 
-%     then graphic should be an empty value (e.g., graphic = []).
+if isempty(visualElement)
+    graphic = [];
+else
+    name = Urdf.get_attribute(visualElement, 'name', '');
+    
+    origin = Urdf.get_element(visualElement, 'origin');
+    T = Urdf.parse_origin(origin);
+    
+    material = Urdf.get_element(visualElement, 'material');
+    
+    geometry = Urdf.get_element(visualElement, 'geometry');
+    graphic = Urdf.parse_geometry(geometry);
+    
+    graphic.T = T * graphic.T;
+    graphic.Name = name;
+    graphic.Material = Urdf.parse_material(material);
+end
 end
