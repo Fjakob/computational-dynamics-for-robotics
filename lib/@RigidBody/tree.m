@@ -38,27 +38,28 @@ end
 % make a local copy of id; once we recurse id changes
 myId = id;
 label = '';
-if isempty(obj.Parent)
-    attr = [attr, {'color=red'}];
-elseif isempty(obj.Children)
-    attr = [attr, {'color=blue'}];
-else
-    attr = [attr, {'color=green'}];
-end
+if root
+    color red
+%       * take a look at lib/+Draw/tree.m for syntax    
+else if leaf
+    color blue
+else not a root or leaf
+    color green
 
 attr = [sprintf('%s,', attr{1:end-1}), attr{end}];
-label = [obj.Name, label];
+label = ???
+%   * must equal [name of obj, label]
 cmds = {sprintf('N%d [%s,label="%s"];', myId, attr, label)};
 
 if myId > 0
     cmds = [cmds, {sprintf('N%d -> N%d;', myId, parentId)}];
 end
-
-for c = obj.Children
-    cmds = [cmds, c.tree(myId)]; %#ok<AGROW>
+for each child
+    cmds = [cmds, result of calling tree on child];
 end
 
-if ischar(parentId)
-    cmds = Utils.saveGraphiVizTree(parentId, cmds);
+if parentId is a character array
+    cmds = ???
+%       * save the file using Utils.saveGraphiVizTree
 end
 end
