@@ -3,8 +3,8 @@ function a = arrow(root, varargin)
 % adds the graphic to root
 %
 %   Example:
-%       Draw.arrow(axes); 
-%       view(3); 
+%       Draw.arrow(axes);
+%       view(3);
 %       axis equal;
 %
 %       >> plot of arrow graphic primitives (head and shaft) at the origin
@@ -38,7 +38,7 @@ if isempty(h) || ~isnan(h) || isempty(p)
 end
 
 if ~isempty(p)
-   a = update(a, p);
+    a = update(a, p);
 end
 end
 
@@ -113,23 +113,35 @@ headHeight = head.Children.Matrix(3, 3);
 zAxis = [0; 0; 1]; % base arrow's initial direction
 n = norm(p);
 
-% scale the unit arrow's shaft to the correct size in the unit
-% arrow's frame (i.e., along z-axis)
-s = [1; 1; n - headHeight]; % shaft scaling
-Tscale = Math.Rps_to_T([], [], s);
-shaft.Matrix = Tscale;
-
-% position the label and arrow head in the scaled arrow's frame
-% (i.e., along z-axis)
-t = [0; 0; n - headHeight]; % label and head translation
-Ttrans = Math.Rp_to_T([], t);
-label.Matrix = Ttrans;
-head.Matrix = Ttrans;
-
-% transform scaled arrow along z-axis to point in the direction of p with
-% the tip of scaled vector's head at the origin of its coordinate system
-% (in the parent's frame, the end of the tip is located at point p)
-R = Math.R_a_to_b(zAxis, p);
-T = Math.Rp_to_T(R, []);
-arrow.Matrix = T;
+if n > 0
+    % scale the unit arrow's shaft to the correct size in the unit
+    % arrow's frame (i.e., along z-axis)
+    s = [1; 1; n - headHeight]; % shaft scaling
+    Tscale = Math.Rps_to_T([], [], s);
+    shaft.Matrix = Tscale;
+    
+    % position the label and arrow head in the scaled arrow's frame
+    % (i.e., along z-axis)
+    t = [0; 0; n - headHeight]; % label and head translation
+    Ttrans = Math.Rp_to_T([], t);
+    label.Matrix = Ttrans;
+    head.Matrix = Ttrans;
+    
+    % transform scaled arrow along z-axis to point in the direction of p with
+    % the tip of scaled vector's head at the origin of its coordinate system
+    % (in the parent's frame, the end of the tip is located at point p)
+    R = Math.R_a_to_b(zAxis, p);
+    T = Math.Rp_to_T(R, []);
+    arrow.Matrix = T;
+else
+    % draw a zero length vector (looks like a 2D square)
+    s = [1; 1; eps];  % hgtransforms can't do <= 0 scaling
+    Tscale = Math.Rps_to_T([], [], s);
+    shaft.Matrix = Tscale;
+    t = [0; 0; -headHeight]; % label and head translation
+    Ttrans = Math.Rp_to_T([], t) * Tscale;
+    label.Matrix = Ttrans;
+    head.Matrix = Ttrans;
+    arrow.Matrix = eye(4);
+end
 end
