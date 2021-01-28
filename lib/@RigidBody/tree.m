@@ -1,12 +1,13 @@
 function cmds = tree(obj, parentId)
-% TREE Creates a scene graph using graphviz's dot language
-%   CMDS = TREE(NODE) Returns the dot language commands CMDS for drawing
-%   the scene graph rooted at graphics object NODE.
+% TREE Creates a kinematic tree using graphviz's dot language
+%   CMDS = TREE(OBJ) Returns the dot language commands CMDS for drawing
+%   the tree rooted at RigidBody object OBJ.
 %
-%   CMDS = TREE(NODE, PARENTID) Labels the nodes Nx in the resulting dot
-%   syntax starting at PARENTID. PARENTID must be an integer.
+%   CMDS = TREE(OBJ, PARENTID) Labels OBJ as node Nx in the resulting dot
+%   syntax, where x is the node ID.  The ID must be greater than PARENTID
+%   and unique to the tree.  PARENTID must be an integer.
 %
-%   CMDS = TREE(NODE, HTMLFILE) After drawing the scene graph output the
+%   CMDS = TREE(OBJ, HTMLFILE) After drawing the kinematic tree output the
 %   results into an html file HTMLFILE.
 %
 %   Note:
@@ -18,7 +19,7 @@ function cmds = tree(obj, parentId)
 %       helper library |full.render.js| are installed in ext_lib/js.  The
 %       html file will not render correctly if these files are not present.
 %
-%   See also HGTRANSFORM, WHAT, POINT, ARROW, FRAME, SHAPEF, and STL
+%   See also DRAW.TREE
 
 % AUTHORS:
 %   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 01/13/2021, Matlab R2020a, v1
@@ -40,7 +41,7 @@ myId = id;
 label = '';
 if root
     color red
-%       * take a look at lib/+Draw/tree.m for syntax    
+%       * take a look at lib/+Draw/tree.m for syntax
 else if leaf
     color blue
 else not a root or leaf

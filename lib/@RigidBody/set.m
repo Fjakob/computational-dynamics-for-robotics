@@ -1,9 +1,19 @@
 function obj = set(obj, varargin)
-% SET sets rigid body properties use a Name, Value pair.
+% SET sets rigid body properties using a Name, Value pair.
+%   OBJ = set(OBJ, VARARGIN) Updates OBJ's properties based on (Name,
+%   Value) pairs.  The following Name options are valid:
+%       'Parent' - Updates OBJ's parent to Value and 
+%       OBJ.LinkTransform.RootGraphic's parent to Value.Link.RootGraphic
+%       'M' - Updates the fixed parent-to-OBJ transform of OBJ and
+%       OBJ.LinkTransform.
+%       'I' - Updates OBJ's spatial inertia and the spatial inertia of
+%       OBJ.CenterOfMass
+%       'A' - Updates OBJ's screw axis and the screw axis of OBJ.ScrewAxis
+%       'dAdt' - Updates OBJ's screw axis derivative
 %
 %   Example:
-%       rb = RigidBody('robot');
-%       rb.set('M', eye(4));
+%       rb = RigidBody('robot-link-name');
+%       rb.set('M', eye(4), 'I', zeros(6));
 
 p = inputParser;
 p.addParameter('Parent', obj.Parent);

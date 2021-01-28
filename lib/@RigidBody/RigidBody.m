@@ -19,16 +19,15 @@ classdef RigidBody < handle
     %
     %   RigidBody Methods:
     %      RigidBody - The constructor for this class
+    %      set - Sets the various properties of the class    
     %      fromUrdf - A static function for creating rigid bodies from URDF
     %      tree - Draws the kinematic tree in html
-    %      set - Sets the various properties of the class
     %      clear - Delete the user-defined fields in Vars
+    %      var - Returns the value of a user-defined field in Vars    
     %      fetch - Returns a struct with fields and values from Vars
     %      store - Stores a new value in Vars
     %      toArray - Converts a linked list into an array
-    %         map = toMap(obj)
-    %         cmds = tree(obj, parentId)
-    %         value = var(obj, name)
+    %      toMap - Converts a linked list into an associative array
     %
     %   See also Frame, ScrewAxis, EnvironmentObject, CenterOfMass
     
@@ -48,6 +47,9 @@ classdef RigidBody < handle
 %   * In the constructor, initialize
 %       * Name from the input `name` in RigidBody
 %       * Parent and Children to RigidBody.empty()
+%           * see https://www.mathworks.com/help/matlab/ref/empty.html for
+%             more details; this way we can use isempty(...) and have the
+%             correct object type.
 %       * M to the identity element in SE(3)
 %       * I to zero mass and zero rotational inertia
 %       * A and dAdt to zero 6 x 1 vectors
@@ -58,7 +60,7 @@ classdef RigidBody < handle
 %       * Link a Frame with Joint as parent and frame coincident with 
 %         Joint's frame
 %       * CenterOfMass a CenterOfMass with Link as parent and I as its
-%         spatial inertia
+%         spatial inertia    
 %
 %   * Define the setter set.Parent(obj, parent).  This function takes in
 %     the rigid body's parent and appends itself to the end of the parent's
@@ -66,7 +68,7 @@ classdef RigidBody < handle
 %     have:
 %         parent.Children(end) = obj
 %       * Make sure to test that the parent isn't empty before attempting 
-%         to add obj as a child.  
+%         to add obj as a child.
 %       * Also, beware of your interpretation of what the parent array 
 %         should be and what you need to do in order to make it true.  You 
 %         want to *append* obj to the end of parent.Children as a new 
@@ -76,7 +78,13 @@ classdef RigidBody < handle
 %     method is a static method that has to go in a static method block.  
 %     You can read the Matlab OOP docs regarding static methods and a
 %     static method block.
+%       * https://www.mathworks.com/help/matlab/matlab_oop/static-methods.html
 %
-%   * Define the class method tree as an externally defined public method.
+%   * Define the function signature of the RigidBody method tree in public 
+%     methods block.
+%       * cmds = tree(obj, parentId), where obj is the current node in the
+%         RigidBody tree and parentId is either the parent's ID number or,
+%         for the root node, the name of an html file to create after the
+%         recursion is done.
     
 end

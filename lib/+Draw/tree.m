@@ -3,8 +3,9 @@ function cmds = tree(node, parentId)
 %   CMDS = TREE(NODE) Returns the dot language commands CMDS for drawing
 %   the scene graph rooted at graphics object NODE.
 %
-%   CMDS = TREE(NODE, PARENTID) Labels the nodes Nx in the resulting dot
-%   syntax starting at PARENTID. PARENTID must be an integer.
+%   CMDS = TREE(NODE, PARENTID) Labels NODE as node Nx in the resulting dot
+%   syntax, where x is the node ID.  The ID must be greater than PARENTID
+%   and unique to the tree.  PARENTID must be an integer.
 %
 %   CMDS = TREE(NODE, HTMLFILE) After drawing the scene graph output the
 %   results into an html file HTMLFILE.
@@ -63,47 +64,6 @@ for i = 1:length(c)
 end
 
 if ischar(parentId)
-    cmds = saveGraphiVizTree(parentId, cmds);
-end
-end
-
-function html = saveGraphiVizTree(file, cmds)
-indent = '  ';
-
-dir = [what('ext_lib').path, filesep, 'js/'];
-
-cmds = [{'rankdir=BT;', 'node [shape=box];'}, cmds];
-cmds = cellfun(@(x) [repmat('  ', [1 4]), '''', x, ''' +'], cmds, ...
-    'UniformOutput', false);
-html = [{
-    '<!DOCTYPE html>';
-    '<html>';
-    [indent, '<head>'];
-    [indent, indent, '<meta charset="utf-8">'];
-    [indent, '</head>'];
-    [indent, '<body>'];
-    [indent, indent, '<script src="', dir, 'viz.js"></script>'];
-    [indent, indent, '<script src="', dir, 'full.render.js"></script>'];
-    [indent, indent, '<script>'];
-    [indent, indent, indent, 'var viz = new Viz();'];
-    [indent, indent, indent, 'viz.renderSVGElement(''digraph CDR { '' +']};
-    cmds'
-    {
-    [indent, indent, indent, '''}'')'];
-    [indent, indent, indent, '.then(function(element) {'];
-    [indent, indent, indent, indent, 'document.body', ...
-    '.appendChild(element);'];
-    [indent, indent, indent, '});'];
-    [indent, indent, '</script>'];
-    [indent, '</body>'];
-    '</html>'
-    }];
-
-html = sprintf('%s\n', html{:});
-
-if ~isempty(file)
-    f = fopen(file, 'w');
-    fprintf(f, '%s', html);
-    fclose(f);
+    cmds = Utils.saveGraphiVizTree(parentId, cmds);
 end
 end
