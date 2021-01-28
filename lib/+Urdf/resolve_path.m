@@ -23,4 +23,10 @@ else
     n = strlength(basePrefix) + 1;
     path = fullfile(dir(n:end), file);
 end
+
+if ismac()
+    path = strrep(filesep, path, '%20', ' ');
+else
+    path = strrep(path, '%20', ' ');
+end
 end
