@@ -28,4 +28,7 @@ else
 end
 
 path = strrep(path, '%20', ' ');
+if ~isfile(path)
+    error('path is not resolving to a file name: %s', path);
+end
 end
