@@ -22,11 +22,10 @@ else
     % get rid of file:\ at beginning of URI
     n = strlength(basePrefix) + 1;
     path = fullfile(dir(n:end), file);
+    if ismac()
+        path = strrep(filesep, path);
+    end    
 end
 
-if ismac()
-    path = strrep(filesep, path, '%20', ' ');
-else
-    path = strrep(path, '%20', ' ');
-end
+path = strrep(path, '%20', ' ');
 end
