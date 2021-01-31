@@ -1,5 +1,5 @@
 function obj = set(obj, varargin)
-% SET sets rigid body properties using a Name, Value pair.
+% set sets rigid body properties using a Name, Value pair.
 %   OBJ = set(OBJ, VARARGIN) Updates OBJ's properties based on (Name,
 %   Value) pairs.  The following Name options are valid:
 %       'Parent' - Updates OBJ's parent to Value and 
@@ -12,8 +12,15 @@ function obj = set(obj, varargin)
 %       'dAdt' - Updates OBJ's screw axis derivative
 %
 %   Example:
+%       T = [0.6428 0 0.766 5; 0 1 0 -4; -0.766 0 0.6428 3; 0 0 0 1];      
 %       rb = RigidBody('robot-link-name');
-%       rb.set('M', eye(4), 'I', zeros(6));
+%       rb.set('M', T, 'I', zeros(6));
+%       rb.M
+%
+%       >> [0.6428 0 0.766 5; 0 1 0 -4; -0.766 0 0.6428 3; 0 0 0 1]
+
+% AUTHORS:
+%   Nelson Rosa nr@inm.uni-stuttgart.de 01/31/2021, Matlab R2020a, v1
 
 p = inputParser;
 p.addParameter('Parent', obj.Parent);

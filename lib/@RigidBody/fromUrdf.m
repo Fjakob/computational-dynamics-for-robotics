@@ -1,4 +1,22 @@
 function [root, name] = fromUrdf(file)
+% fromUrdf Creates a tree with nodes of type RigidBody from a URDF file.
+%   [ROOT, NAME] = fromUrdf(FILE) Returns the root of the tree ROOT and the
+%   name of the robot as specified in the <robot> tag of a URDF file
+%   specified with FILE.
+%
+%   Example:
+%       dir = what('ext_lib').path;
+%       urdf = fullfile(dir, 'humanoid_urdf', 'sm_humanoid.urdf');
+%       [root, name] = RigidBody.fromUrdf(urdf)
+%
+%       >> root = RigidBody with properties: ...
+%       >> name = 'robot'
+%
+%   See also tree_urdf_parser toMap toArray
+
+% AUTHORS:
+%   Nelson Rosa nr@inm.uni-stuttgart.de 01/31/2021, Matlab R2020a, v1
+
 %   YOUR TODO LIST: Similar to scripts/tree_urdf_parse.m, parse a URDF 
 %                   file.
 %       + we are creating a tree where the nodes are of type RigidBody

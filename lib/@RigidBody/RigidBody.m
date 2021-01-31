@@ -20,6 +20,7 @@ classdef RigidBody < handle
     %   RigidBody Methods:
     %      RigidBody - The constructor for this class
     %      set - Sets the various properties of the class    
+    %      T - Computes the transform from parent to rigid body
     %      fromUrdf - A static function for creating rigid bodies from URDF
     %      tree - Draws the kinematic tree in html
     %      clear - Delete the user-defined fields in Vars
@@ -30,6 +31,9 @@ classdef RigidBody < handle
     %      toMap - Converts a linked list into an associative array
     %
     %   See also Frame, ScrewAxis, EnvironmentObject, CenterOfMass
+    
+    % AUTHORS:
+    %   Nelson Rosa nr@inm.uni-stuttgart.de 01/31/2021, Matlab R2020a, v1
     
 % YOUR TODO LIST:
 %    
