@@ -1,7 +1,7 @@
 % INPUTS: obj, q, qd, qdd 
 % OUTPUT: tau
-% ASSUMPTIONS: obj.Robot has fields 'V' and 'Vdot' initialized and stored 
-%              in Vars
+% ASSUMPTIONS: obj.Robot has fields 'T0', 'V', and 'Vdot' initialized and 
+%              stored in obj.Robot.Vars.
 
 % extract robot info from obj
 n = ???;
