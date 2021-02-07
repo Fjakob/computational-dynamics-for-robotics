@@ -1,4 +1,15 @@
 function tau = iD(obj, q, qd, qdd)
+% iD Compute a robot's inverse dynamics.
+%   TAU = iD(OBJ, Q, QD, QDD) Returns the generalized forces required to
+%   generate the motion specified by generalized coordinates Q, velocity
+%   QD, and acceleration QDD.  The generalized coordinates are linear
+%   arrays that are internally converted into an associative array using
+%   OBJ.Mapping.  The output TAU is a linear array where TAU(i) is the
+%   generalized force applied to rigid body with name OBJ.Mapping{i}.
+
+% AUTHORS:
+%   Nelson Rosa nr@inm.uni-stuttgart.de 02/07/2021, Matlab R2020a, v1
+
 map = obj.Mapping;
 if isempty(map)
     warning('No mapping exists for this robot.  Set obj.Mapping.');
@@ -31,8 +42,11 @@ function tau = recurse(b, tau, q, qd, qdd)
 %       * you will eventually call |recurse| again. consider what part of 
 %         the code comes before the recursive call and what comes after the
 %         recursive call.
+%       * you don't need the if/else statement found in the first pass of 
+%         the RNEA.  Why?
+%       * for the second pass, instead of |if k > 0|, how else can we avoid 
+%         assigning values to the root body using isempty(...).
 %       * instead of relying on a parent array, simply use b.Parent
-%       * instead of |if k > 0|, use |if isempty(p.Parent)|, for example.
 %       + An important addition is that you |recurse| on the children of b!
 %       * You need to make sure that the variables that the children of b
 %         depend on have been set before you make the recursive call.
