@@ -83,7 +83,7 @@ nq = nx / 2;
 q = x(1:nq);
 qd = x(nq+1:nx);
 if nargin < 4 || isempty(taufun)
-    tau = zeros(n, 1);
+    tau = zeros(nq, 1);
 else
     tau = taufun(t, q, qd);
 end
