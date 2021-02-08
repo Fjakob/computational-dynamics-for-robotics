@@ -48,7 +48,7 @@ M(2, 2) = transpose(A_22) * Ic2 * A_22;
 M(3, 3) = transpose(A_33) * Ic3 * A_33;
 M(4, 4) = transpose(A_44) * Ic3 * A_44;
 
-    M(4, 2) = transpose(A_44) * Ic4 * A_42;
+M(4, 2) = transpose(A_44) * Ic4 * A_42;
 M(2, 4) = M(4, 2);
 M(3, 1) = transpose(A_33) * Ic3 * A_31;
 M(1, 3) = M(3, 1);
