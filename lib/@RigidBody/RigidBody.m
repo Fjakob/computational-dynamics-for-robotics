@@ -71,6 +71,10 @@ classdef RigidBody < handle
 %     Children array.  That is before returning from this function, we 
 %     have:
 %         parent.Children(end) = obj
+%       * If obj has a parent that you are replacing, make sure to remove 
+%         obj from the old parent's Children array before assigning the new
+%         parent.  You can use logical array indexing (array ~= obj) to 
+%         find the index of obj in the old parent's Children array.
 %       * Make sure to test that the parent isn't empty before attempting 
 %         to add obj as a child.
 %       * Also, beware of your interpretation of what the parent array 
