@@ -1,4 +1,4 @@
-function [I_a, R_bp] = mIcom_to_spatial_inertia(m, Icom, T_ab)
+function I_a = mIcom_to_spatial_inertia(m, Icom, T_ab)
 % MICOM_TO_SPATIAL_INERTIA Converts mass properties to a spatial inertia
 %   I_A = MICOM_TO_SPATIAL_INERTIA(M, ICOM, T_AB) returns the spatial
 %   inertia of a rigid body I_A in {a} coordinates given an arbitrary frame
@@ -12,12 +12,6 @@ function [I_a, R_bp] = mIcom_to_spatial_inertia(m, Icom, T_ab)
 %   where Ad(T) and T^(-1) are the adjoint of T and inverse of T,
 %   respectively.
 %
-%   [I_A, R_BP] = MICOM_TO_SPATIAL_INERTIA(___) also returns the
-%   orientation of the frame {p} aligned with the prinicpal axes of ICOM
-%   with respect to {b}.  This can be used in SPATIAL_INERTIA_TO_MICOM to
-%   return the same ICOM used in MICOM_TO_SPATIAL_INERTIA; the default is
-%   to return ICOM in {p} coordinates.
-%
 %   Note:
 %       The frame {b} must have its origin at the center of mass of the
 %       rigid body in order for I_b the spatial inertia in {b} coordinates
@@ -27,7 +21,7 @@ function [I_a, R_bp] = mIcom_to_spatial_inertia(m, Icom, T_ab)
 %       T_ab = eye(4);
 %       Icom = [1 2 3; 4 5 6; 7 8 9];
 %       m = 10;
-%       I_b = Math.mIcom_to_spatial_inertia(m, Icom, T_ab)
+%       I_a = Math.mIcom_to_spatial_inertia(m, Icom, T_ab)
 %
 %       >> [ 
 %           1 2 3 0 0 0; 
@@ -49,8 +43,4 @@ AdT = Math.AdT(T_ba);
 Z = zeros(3, 3);
 I_b = [Icom, Z; Z, m * eye(3)];
 I_a = transpose(AdT) * I_b * AdT;
-
-if nargout > 1
-    R_bp = eig(Icom);
-end
 end

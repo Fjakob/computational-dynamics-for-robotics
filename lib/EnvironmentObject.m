@@ -32,8 +32,7 @@ classdef EnvironmentObject < handle
         %% Constructor
         function obj = EnvironmentObject(parent, myGraphics)
             % b/c matlab.graphics.primitive.Transform is a sealed class, we
-            % can't be a subclass; instead we'll act as a wrapper class and
-            % add ourselves in UserData to hook back into ourselves.
+            % can't be a subclass; instead we'll act as a wrapper class.
             parent = obj.getGraphicsHandle(parent);
             obj.RootGraphic = hgtransform('Parent', parent, ...
                 'Tag', 'RootGraphic');
@@ -73,28 +72,14 @@ classdef EnvironmentObject < handle
             %   transform.  The recursion stops once we hit an |axes|
             %   object (the root of our tree; see ENVIRONMENT.).
             
-            error('get.T_sb has not been re-implemented yet.');
-%            node = base case for node   <--------***** FIX
-%               * we want to start from this object's root graphic handle
-%            T = base case for T   <--------***** FIX
-%            while ~isempty(node) && ~isa(node, 'axes')   <------ UNCOMMENT
-%               + we only update T when node.Type is an hgtransform; these
-%                 are the only graphics types we assume have a
-%                 transformation matrix in their Matrix property.
-%               * see the documentation for hgtransform, especially
-%                 |Type| in the hgtransform properties documentation
-%               * create an hgtransform in the command window to get an
-%                 idea of the value and type for node.Type
-%                   - h = hgtransform();
-%                   - h.Type
-%               * what's the type for a surface handle? Try h = surface()
-%               * when your ready to write the test, |strcmp| might be
-%                 helpful
-%                node = ????;   <--------***** FIX
-%                   * how do we move up the tree to get to the root?
-%                   * stuck?  Try inspecting hgtransform properties
-%                     documentation.
-%            end                                          <------ UNCOMMENT
+            node = obj.RootGraphic;
+            T = eye(4);
+            while ~isempty(node) && ~isa(node, 'axes')
+                if strcmp(node.Type, 'hgtransform')
+                    T = node.Matrix * T;
+                end
+                node = node.Parent;
+            end
         end
         %% Public Methods
         function obj = setShapeColor(obj, color)
@@ -136,7 +121,7 @@ classdef EnvironmentObject < handle
             property = cellify(property);
             value = cellify(value);          
             set(h, property, value);
-        end        
+        end
         function obj = show(obj)
             g = obj.MyGraphics;
             if ~isempty(g)
@@ -174,10 +159,8 @@ classdef EnvironmentObject < handle
             
             if isgraphics(child)
                 child.set('Parent', obj.RootGraphic);
-            elseif isfile(child)
-                Draw.stl(obj.RootGraphic, child, T, n, options);
             else
-                Draw.shapef(obj.RootGraphic, child, T, n, options);
+                Draw.what(obj.RootGraphic, child, T, n, options);
             end
         end
     end

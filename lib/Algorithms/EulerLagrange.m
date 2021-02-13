@@ -21,7 +21,7 @@ classdef EulerLagrange < handle
     %      writeToFile - Saves the symbolic variables to a  file
     
     % AUTHORS:
-    %   <------------ Add your info! ------------>    
+    %   <------------ Add your info! ------------>
     %   Nelson Rosa nr@inm.uni-stuttgart.de 12/15/2020, Matlab R2020a, v1    
     
     properties (SetAccess = private)

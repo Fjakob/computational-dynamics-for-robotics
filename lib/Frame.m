@@ -47,6 +47,12 @@ classdef Frame < EnvironmentObject
             setTextString@EnvironmentObject(obj, {o; x; y; z});
         end
         %% Public Methods
+        function obj = showOrigin(obj)
+            obj.MyGraphics.Children(1).Visible = 'on';
+        end
+        function obj = hideOrigin(obj)
+            obj.MyGraphics.Children(1).Visible = 'off';
+        end
         function obj = showAxes(obj)
             for i = 2:4
                 obj.MyGraphics.Children(i).Visible = 'on';

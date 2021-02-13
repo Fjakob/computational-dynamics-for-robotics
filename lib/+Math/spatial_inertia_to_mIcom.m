@@ -38,7 +38,29 @@ if nargin < 2
     R_ab = eye(3);
 end
 
-m = ???
-Icom = ???
-T_ab = ???
+% transform I_a into I_c
+R_ac = R_ab;
+T_ac = Math.Rp_to_T(R_ac, []);
+AdT = Math.AdT(T_ac);
+I_c = transpose(AdT) * I_a * AdT;
+
+% get mass
+m = I_c(6, 6);
+
+% I_c(4:6, 1:3) = m * pmat_bc contains the position of {c} relative to {b},
+% extract and then convert pmat_bc into p_bc
+pmat_bc = I_c(4:6,1:3) / m; % matrix representation of {a} relative to {b}
+p_bc = Math.so3_to_r3(pmat_bc); % convert pmat_bc into p_bc
+
+% Icom_c = Icom_b + Id = I_c(1:3, 1:3) is Icom in {c} written in terms of
+% Icom_b using Steiner's theorem.  Extract Icom = Icom_b.  The off-diagonal
+% blocks can be used to compute Id
+Id = I_c(1:3, 4:6) * I_c(4:6, 1:3) / m; % calc Id from off-diagonal blocks
+Icom = I_c(1:3, 1:3) - Id; % get Icom which is an Icom at c.o.m frame {b}
+
+% compute the transform from {a} to {b}, T_ab = T_ac * T_cb
+T_bc = Math.Rp_to_T([], p_bc);
+T_cb = Math.T_inverse(T_bc);
+T_ac = Math.Rp_to_T(R_ac, []);
+T_ab = T_ac * T_cb;
 end

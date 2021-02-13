@@ -1,7 +1,7 @@
 function T = expm6(se3)
 % EXPM6 Computes the matrix exponential of an element in se(3).
 %   T = EXPM6(SE3) returns the 4x4 transformation matrix in SE(3) of SE3
-%   in se(3).  For SE3 = [S theta], we have
+%   in se(3).  For SE3 = [S * theta], we have
 %       T = [R, G(theta)*v; 0, 1],
 %   where
 %       S = [w; v] in R^6 with norm(w) = 1 or norm(v) = 1 if norm(w) = 0,

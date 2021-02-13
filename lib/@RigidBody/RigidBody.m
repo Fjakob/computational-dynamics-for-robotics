@@ -12,6 +12,7 @@ classdef RigidBody < handle
     %       A - the body's screw in R^6 in link coordinates
     %       dAdt - derivative of A in a moving frame
     %       M - the transform in SE(3) from parent to rigid body
+    %       Fext0 - An externally applied wrench in R^6 in {s} coordinates
     %       LinkTransform - An EnvironmentObject for holding other graphics
     %       Joint - A graphical representation of the screw axis
     %       Link - A graphical representation of a link
@@ -47,6 +48,7 @@ classdef RigidBody < handle
         A % screw in link coordinates, A = A_ii in R^6
         dAdt % acceleration in moving frame coordinates, dAdt = dA_ii/dt
         M % transform from parent to rigid body at home position, M = M_ip
+        Fext0 % wrench in fixed frame {s} coordinates
         
         LinkTransform % A graphical transform from parent to rigid body
         Joint % A ScrewAxis object
@@ -60,6 +62,7 @@ classdef RigidBody < handle
             I = Z;
             A = Z(:, 1);
             dAdt = Z(:, 1);
+            Fext0 = Z(:, 1);
             
             % set graphics
             obj.LinkTransform = EnvironmentObject([]);
@@ -76,11 +79,17 @@ classdef RigidBody < handle
             obj.Name = name;
             obj.Parent = RigidBody.empty();
             obj.Children = RigidBody.empty();
-            obj.set('M', M, 'I', I, 'A', A, 'dAdt', dAdt);
+            obj.set('M', M, 'I', I, 'A', A, 'dAdt', dAdt, 'Fext0', Fext0);
         end
         function set.Parent(obj, parent)
+            if ~isempty(obj.Parent)
+                % remove obj from children array of old parent
+                c = obj.Parent.Children;
+                obj.Parent.Children = c(c ~= obj);
+            end
             obj.Parent = parent;
             if ~isempty(parent)
+                % add obj to children array of new parent
                 parent.Children(end + 1) = obj;
             end
         end
@@ -94,8 +103,9 @@ classdef RigidBody < handle
         values = fetch(obj, varargin)
         obj = set(obj, varargin)
         obj = store(obj, varargin)
+        obj = storeDefault(obj)
         [bodies, parent] = toArray(obj, isRoot)
-        map = toMap(obj)
+        [map, names] = toMap(obj)
         cmds = tree(obj, parentId)
         value = var(obj, name)
     end

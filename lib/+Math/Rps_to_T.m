@@ -23,14 +23,13 @@ function T = Rps_to_T(R, p, s)
 %   See also RP_TO_T
 
 % AUTHORS:
-%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 12/08/2020, Matlab R2020a, v1
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 01/24/2021, Matlab R2020a, v2
 
-        if isempty(s)
-            s = [1; 1; 1];
-        elseif isscalar(s)
-            s = [s; s; s];
-        end
-        i = [1; 6; 11]; % diagonal elements of R
-        T = Math.Rp_to_T(R, p);
-        T(i) = T(i) .* s(:);
-    end
+if isempty(s)
+    s = [1; 1; 1];
+elseif isscalar(s)
+    s = [s; s; s];
+end
+T = Math.Rp_to_T(R, p);
+T(1:3, 1:3) = T(1:3, 1:3) * diag(s);
+end
