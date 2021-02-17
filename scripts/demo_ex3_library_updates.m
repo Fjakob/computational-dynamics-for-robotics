@@ -89,7 +89,6 @@ frame2 = Frame(frame1, T);
 frame2.Color = '#15ff09'; % can use html color spec
 frame2.Name = '2';
 
-
 env.resetOutput;
 
 %% Changes to CoordVector
@@ -98,9 +97,9 @@ env.resetOutput;
 %   graphics or EnvironmentObject handle the parent of a Frame object
 % * The second parameter in setCoords updates the parent frame of the
 %   CoordVector object; it can be any graphics or EnvironmentObject handle
-% * Changed default colors for vector to default output of surface(...)
+% * Changed default colors for vector to default colors of surface(...)
 % * Added properties Name
-% * Added method moveGraphic (actually overrides superclass' method)
+% * Added method moveGraphic (overrides superclass' method)
 % * CoordVector is a subclass of EnvironmentObject
 % * Removed properties name, color, and all Constant properties
 % * Removed method delete, updateGraphics
@@ -123,7 +122,7 @@ p.getCoords(env.SpaceFrame)
 % get coords in {1}
 p.getCoords(frame1)
 
-% get coords in {2}; these two should be the same
+% get coords in {2}; these two are the same
 p.getCoords(frame2)
 Math.Tx(T, p_2)
 

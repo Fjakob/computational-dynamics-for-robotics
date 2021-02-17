@@ -9,6 +9,8 @@
 
 %% Model Parameters
 
+clear;
+
 m = 1;
 L = 2/3;
 r = L / 2;

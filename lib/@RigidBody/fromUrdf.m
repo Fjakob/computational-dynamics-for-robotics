@@ -24,12 +24,7 @@ for i = links.keys
     k = i{:};
     link = links(k);
     g = link.Graphic;
-    rb = RigidBody(link.Name).set('I', link.I);
-    if ~isempty(g)
-        h = Draw.what(rb.Link.RootGraphic, g.FormatString, g.T);
-        set(findobj(h, '-property', 'FaceColor'), ...
-            'FaceColor', g.Material.Color(1:3));
-    end
+    rb = RigidBody(link.Name).set('I', link.I, 'Graphics', g);
     tree(k) = rb;
 end
 

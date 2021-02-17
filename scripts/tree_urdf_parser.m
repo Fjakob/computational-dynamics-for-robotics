@@ -1,4 +1,4 @@
-% URDF_PARSER A script for displaying CDR-compatible URDF files.
+% TREE_URDF_PARSER A script for displaying CDR-compatible URDF files.
 %
 %   Note:
 %       * If you want to add more URDF models, place them in ext_lib.

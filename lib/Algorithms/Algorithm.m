@@ -87,5 +87,6 @@ if nargin < 4 || isempty(taufun)
 else
     tau = taufun(t, q, qd);
 end
-xdot = [qd; obj.fD(q, qd, tau)];
+qdd = obj.fD(q, qd, tau);
+xdot = [qd; qdd(1:nq)];
 end

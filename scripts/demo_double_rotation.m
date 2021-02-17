@@ -5,10 +5,8 @@
 %   See also DEMO_SINGLE_ROTATION.
 
 % AUTHORS:
-%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de
-%   11/17/2020, Matlab R2020a, v22
-%   C. David Remy remy@inm.uni-stuttgart.de
-%   9/12/2013, Matlab R2012b, v11
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 11/17/2020, Matlab R2020a, v22
+%   C. David Remy remy@inm.uni-stuttgart.de 9/12/2013, Matlab R2012b, v11
 
 %% Set the Matlab Path
 % Run |cdr_addpath.m| in the LectureCDR root directory to set the path.  You

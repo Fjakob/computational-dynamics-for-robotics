@@ -7,10 +7,8 @@
 %   See also ENVIRONMENT, FRAME, COORDVECTOR, ROT, UTILS.
 
 % AUTHORS:
-%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de
-%   11/16/2020, Matlab R2020a, v22
-%   C. David Remy remy@inm.uni-stuttgart.de
-%   10/12/2018, Matlab R2018a, v21
+%   Nelson Rosa Jr. nr@inm.uni-stuttgart.de 11/16/2020, Matlab R2020a, v22
+%   C. David Remy remy@inm.uni-stuttgart.de 10/12/2018, Matlab R2018a, v21
 
 %% Set the Matlab Path
 % Set Matlab's path to include the LectureCDR library, scripts, and test

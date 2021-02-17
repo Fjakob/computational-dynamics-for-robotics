@@ -50,10 +50,7 @@ classdef RigidBody < handle
         M % transform from parent to rigid body at home position, M = M_ip
         Fext0 % wrench in fixed frame {s} coordinates
         
-        LinkTransform % A graphical transform from parent to rigid body
-        Joint % A ScrewAxis object
-        Link % A Frame object
-        CenterOfMass % A CenterOfMass object
+        Graphics % graphics command for creating a graphical object
     end
     methods
         function obj = RigidBody(name)
@@ -64,21 +61,14 @@ classdef RigidBody < handle
             dAdt = Z(:, 1);
             Fext0 = Z(:, 1);
             
-            % set graphics
-            obj.LinkTransform = EnvironmentObject([]);
-            obj.Joint = ScrewAxis(obj.LinkTransform, A);
-            obj.Link = Frame(obj.Joint, eye(4));
-            obj.CenterOfMass = CenterOfMass(obj.Link, I);
-            
-            obj.Joint.hide();
-            obj.Link.hide();
-            obj.CenterOfMass.hide();
-            
             % set numeric variables
             obj.clear(); % sets obj.Vars
             obj.Name = name;
             obj.Parent = RigidBody.empty();
             obj.Children = RigidBody.empty();
+            % https://www.mathworks.com/matlabcentral/answers/12912
+            obj.Graphics = struct('FormatString', {}, 'T', {}, ...
+                'Name', {}, 'Material', {});
             obj.set('M', M, 'I', I, 'A', A, 'dAdt', dAdt, 'Fext0', Fext0);
         end
         function set.Parent(obj, parent)
@@ -100,10 +90,11 @@ classdef RigidBody < handle
         
         % externally defined functions
         obj = clear(obj)
+        graphics = createGraphics(obj, parent)
         values = fetch(obj, varargin)
         obj = set(obj, varargin)
         obj = store(obj, varargin)
-        obj = storeDefault(obj)
+        obj = storeDefault(obj, g)
         [bodies, parent] = toArray(obj, isRoot)
         [map, names] = toMap(obj)
         cmds = tree(obj, parentId)
