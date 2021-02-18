@@ -12,7 +12,7 @@ clear;
 % We define the physical properties and the joint axes of a robot in the
 % plane.  In particular, this section defines the pivot point where the
 % constraints are applied |p0| and the position of the robot's center of
-% mass.  The pivot is rendered in gree on the robot and the center of mass
+% mass.  The pivot is rendered in green on the robot and the center of mass
 % as blue dots respectively.
 
 m = 1;
@@ -125,7 +125,7 @@ framerate = 30;
 r = rateControl(framerate);
 N = T * framerate;
 
-root.createGraphics(env)
+root.createGraphics(env);
 bodies = root.toArray();
 
 ax = subplot(1, 2, 2);

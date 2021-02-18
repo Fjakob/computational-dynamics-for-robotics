@@ -1,4 +1,4 @@
-function sol = fD(obj, q, qd, t)
+function [qdd, data] = fD(obj, q, qd, t)
 
 if nargin < 4
     t = -inf;
@@ -12,18 +12,23 @@ v = obj.VirtualContraints;
 b = obj.TransmissionMatrix;
 
 if isempty(p)
+    Ap = [];
+    phip = [];
     k = 0;
 else
     [Ap, phip] = p.calcImplicit(q, qd, t);
-    k = p.K;
+    k = size(Ap, 1);
 end
 
 if isempty(v) || isempty(b)
+    Av = [];
+    phiv = [];
+    B = [];
     m = 0;
 else
     [Av, phiv] = v.calcImplicit(q, qd, t);
     B = transpose(b.calcImplicit(q, qd, t));
-    m = v.K;
+    m = size(Av, 1);
 end
 
 n = length(q);
@@ -47,4 +52,13 @@ if m > 0
 end
 
 sol = A \ b;
+qdd = sol(1:n);
+
+if nargout > 1
+    lambda = sol(n + 1:n + k);
+    u = sol(n + k + 1:n + k + m);
+    data = struct('M', M, 'h', h, ...
+        'Ap', Ap,'phip', phip, 'lambda', lambda, ...
+        'Av', Av, 'phiv', phiv, 'B', B, 'u', u);
+end
 end

@@ -18,14 +18,14 @@ classdef ConstrainedMechanicalSystem < Algorithm
         function obj = setAp(obj, physical)
             obj.PhysicalConstraints = Constraints(obj.Robot, physical);
         end
-        function obj = setAv(obj, virtual, transmission)
+        function obj = setAvB(obj, virtual, transmission)
             obj.VirtualContraints = Constraints(obj.Robot, virtual);
             obj.TransmissionMatrix = Constraints(obj.Robot, transmission);
-            
-            assert(obj.VirtualContraints.K == obj.TransmissionMatrix.K);
+            obj.TransmissionMatrix.ProportionalGainMatrix = 0;
+            obj.TransmissionMatrix.DerivativeGainMatrix = 0;
         end
         
-        qdd = fD(obj, q, qd, t)
+        [qdd, data] = fD(obj, q, qd, t)
         tau = iD(obj, q, qd, qdd)
     end
     methods (Access = protected)

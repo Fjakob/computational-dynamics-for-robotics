@@ -88,5 +88,5 @@ else
     tau = taufun(t, q, qd);
 end
 qdd = obj.fD(q, qd, tau);
-xdot = [qd; qdd(1:nq)];
+xdot = [qd; qdd];
 end

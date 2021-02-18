@@ -41,7 +41,11 @@ classdef Constraints < handle
             obj.Epsilon = 1;
         end
         function k = get.K(obj)
-            k = obj.RigidBodyMap(end, 2);
+            if ~isempty(obj.RigidBodyMap)
+                k = obj.RigidBodyMap(end, 2);
+            else
+                k = 0;
+            end
         end
         function m = get.M(obj)
             m = size(obj.RigidBodyMap, 1);
@@ -54,10 +58,16 @@ classdef Constraints < handle
         end
         function set.Robot(obj, robot)
             [obj.Bodies, obj.Parent] = robot.toArray();
+            obj.clearAllConstraints();
         end
         function obj = clearImplicitConstraints(obj)
             obj.ImplicitConstraints = @noInputConstraints;
         end
+        function obj = clearAllConstraints(obj)
+            obj.clearImplicitConstraints();
+            obj.RigidBodyConstraints = {};
+            obj.RigidBodyMap = [];
+        end        
         
         % external functions
         [J, phi, h, hdot] = calcImplicit(obj, q, qdot, t)

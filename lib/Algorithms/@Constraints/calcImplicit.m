@@ -64,15 +64,19 @@ for i = 1:obj.M
     h(ii) = h(ii) + Ri * [0; 0; 0; T(1:3, 4)];
 end
 
-phi = phi + Kp * h + Kv * hdot;
-
 % add given terms
-[J2, phi2, h2, h2dot] = obj.ImplicitConstraints(q, qdot, t);
+if k > 0
+    [J2, phi2, h2, h2dot] = obj.ImplicitConstraints(q, qdot, t);
+    J = J + J2;
+    phi = phi + phi2;
+    h = h + h2;
+    hdot = hdot + h2dot;
+else
+    [J, phi, h, hdot] = obj.ImplicitConstraints(q, qdot, t);
+end
 
-J = J + J2;
-phi = phi + phi2;
-h = h + h2;
-hdot = hdot + h2dot;
+% compute feedback control law/constraint stabilization terms
+phi = phi + Kp * h + Kv * hdot;
 end
 
 function [Jij, Jijdot] = calcJij(b, R, V, T)
