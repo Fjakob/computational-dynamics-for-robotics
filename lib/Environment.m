@@ -30,27 +30,33 @@ classdef Environment < handle
 
     properties
         SpaceFrame % The envrionment's fixed frame in space
-    end
-    properties (Dependent)
+
          % Axes - A reference to the axes handle of the underlying figure
          %  set.Axes Sets the x, y, z limits of the axes to the 6D array
          %  get.Axes Returns a handle to the figure's axes
          %
          %  Example:
-         %      obj.Axes = [-1 1 -5 5 -2 2];
+         %      axis(obj.Axes, [-1 1 -5 5 -2 2]);
          %      axes = obj.Axes;
         Axes
     end
     % Private Properties
     properties (Access = private)
         light_handle
-        Figure % The handle to the figure
     end
+    properties (Dependent, Access = private)
+        Figure % The handle to the figure
+    end    
     methods
         %% Constructor
-        function obj = Environment()
-            obj.Figure = figure('Visible', 'off', ...
-                'Color', [0.95 0.95 0.95]);
+        function obj = Environment(hAxes)
+            if nargin < 1
+                obj.Axes = axes(figure('Visible', 'off'));
+            else
+                obj.Axes = hAxes;
+            end
+            
+            set(obj.Figure, 'Color', [0.95 0.95 0.95]);
                                   
             obj.light_handle = camlight('right');
             resetOutput(obj);
@@ -65,21 +71,21 @@ classdef Environment < handle
         %% Property Setter/Getter Methods
         %   The scope (private, protected, public) of these methods is
         %   defined in the related properties block.        
-        function axes = get.Axes(obj)
-            % get.Axes returns the figure's axes handle
+        function figure = get.Figure(obj)
+            % get.Figure returns the axes' figure handle
                         
-            axes = gca(obj.Figure);
+            figure = obj.Axes.Parent;
         end
-        function set.Axes(obj, axes)
-            % set.Axes sets the x, y, and z limits of figure's axes handle
+        function set.Figure(obj, figure)
+            % set.Figure change the parent of Axes object
             
-            axis(obj.Axes, axes);
+            obj.Axes.Parent = figure;
         end
         %% Public Methods        
         function delete(obj)
         % delete Closes the figure upon deletion
         
-            if isvalid(obj.Figure)
+            if isvalid(obj) && isvalid(obj.Figure)
                 close(obj.Figure);
             end
         end
