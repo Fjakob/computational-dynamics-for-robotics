@@ -18,7 +18,7 @@
 %   Interpreting the VHC:
 %       For the VHC model, the virtual constraints are enforced through the
 %       control input u(t); there is *no* physical slot that constrains the
-%       motion.  When the controller is off the unconstrained
+%       motion.  When the controller is off (u(t) = 0) the unconstrained
 %       variable-length pendulum dynamics are in effect.
 %
 %   Note:

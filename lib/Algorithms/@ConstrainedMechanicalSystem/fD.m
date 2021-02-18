@@ -40,13 +40,13 @@ A(1:n, 1:n) = M;
 b(1:n) = -h;
 
 if k > 0
-    A(1:n, n+1:n+k) = transpose(Ap);
+    A(1:n, n+1:n+k) = -transpose(Ap);
     A(n+1:n+k, 1:n) = Ap;    
     b(n+1:n+k) = -phip;
 end
 
 if m > 0
-    A(1:n, n+k+1:n+k+m) = B;
+    A(1:n, n+k+1:n+k+m) = -B;
     A(n + k + 1:n + k + m, 1:n) = Av;
     b(n + k + 1:n + k + m) = -phiv;
 end
