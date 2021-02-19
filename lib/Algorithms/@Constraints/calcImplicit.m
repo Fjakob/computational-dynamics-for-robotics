@@ -66,11 +66,11 @@ end
 
 % add given terms
 if k > 0
-    [J2, phi2, h2, h2dot] = obj.ImplicitConstraints(q, qdot, t);
-    A = A + J2;
+    [A2, phi2, g2, g2dot] = obj.ImplicitConstraints(q, qdot, t);
+    A = A + A2;
     phi = phi + phi2;
-    g = g + h2;
-    gdot = gdot + h2dot;
+    g = g + g2;
+    gdot = gdot + g2dot;
 else
     [A, phi, g, gdot] = obj.ImplicitConstraints(q, qdot, t);
 end
