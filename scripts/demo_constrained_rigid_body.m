@@ -112,11 +112,10 @@ sol = ode45(odefun, [0, T], [q;qd]);
 
 %% Animate Rigid Body
 
-env = Environment;
+env = Environment(subplot(1, 2, 1));
 view(env.Axes, [0; 0; 2]);
 xlabel('x')
 ylabel('y')
-subplot(1, 2, 1, env.Axes);
 
 %%
 % You can control the speed of the animation here.  If you want to slow

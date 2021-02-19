@@ -33,8 +33,8 @@ classdef Constraints < handle
     methods
         function obj = Constraints(robot, constraints)
             obj.Robot = robot;
+            obj.clearAllConstraints();
             obj.constrain(constraints);
-            obj.clearImplicitConstraints();
             
             obj.ProportionalGainMatrix = eye(obj.K);
             obj.DerivativeGainMatrix = eye(obj.K);
@@ -65,17 +65,17 @@ classdef Constraints < handle
         end
         function obj = clearAllConstraints(obj)
             obj.clearImplicitConstraints();
+            obj.clearConstraints();
+        end
+        function obj = clearConstraints(obj)
             obj.RigidBodyConstraints = {};
             obj.RigidBodyMap = [];
-        end        
-        
+        end
+
         % external functions
         [J, phi, h, hdot] = calcImplicit(obj, q, qdot, t)
-        J = Jacobian(obj, q)
-    end
-    methods (Access = private)
-        % external functions
         obj = constrain(obj, bRT)
+        J = Jacobian(obj, q)
     end
 end
 
