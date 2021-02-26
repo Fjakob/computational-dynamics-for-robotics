@@ -27,7 +27,7 @@ classdef ScrewAxis < EnvironmentObject
             else
                 axis = S(4:6);
             end
-            obj.UnitScrew = S;
+            obj.UnitScrew = S / norm(axis);
             obj.Axis.setCoords(obj.MyGraphics, axis, T);
         end
         function path = visualize(obj, theta)
