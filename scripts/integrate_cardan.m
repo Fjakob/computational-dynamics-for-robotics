@@ -61,13 +61,20 @@ omega_c = Rot.deskew(omega_c_mat) %#ok<NOPTS>
 % Then combine with |R_sc| to create |R_scB|.  We can extract $B$ from the
 % the output of |omega_c| in the previous cell.
 
+<<<<<<< HEAD
 B = [1, 0, -sin(beta);
     0, cos(alpha), sin(alpha)*cos(beta);
     0, -sin(alpha), cos(alpha)*cos(beta)] %#ok<NOPTS>
 
 % alternatively
 % B = jacobian(omega_c, [alpha_dot, beta_dot, gamma_dot])
+=======
+% B = [1, 0, -sin(beta);
+%     0, cos(alpha), sin(alpha)*cos(beta);
+%     0, -sin(alpha), cos(alpha)*cos(beta)];
+>>>>>>> parent of 4143c7e (creating a new template version of Ex2)
 
+B = jacobian(omega_c, [alpha_dot, beta_dot, gamma_dot]) %#ok<NOPTS>
 R_scB = simplify(expand(R_sc * B));
 
 %% From Symbolic Math to Numerical Expressions
